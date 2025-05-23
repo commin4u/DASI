@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dasi-config
+data:
+  SPRING_PROFILES_ACTIVE: "dev"
+  RABBITMQ_HOST: "host.docker.internal"
+  RABBITMQ_PORT: "5672"
