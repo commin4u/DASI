@@ -61,8 +61,14 @@ jobs:
         with:
           terraform_version: 1.5.0
 
+      - name: Terraform Format Check
+        run: terraform -chdir=infra fmt -check
+
       - name: Terraform Init
         run: terraform -chdir=infra init -input=false
+
+      - name: Terraform Validate
+        run: terraform -chdir=infra validate
 
       - name: Terraform Plan
         run: terraform -chdir=infra plan -input=false
