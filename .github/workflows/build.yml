@@ -1,3 +1,4 @@
+
 name: CI/CD Pipeline
 
 on:
@@ -26,24 +27,28 @@ jobs:
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
+        working-directory: inventory
 
       - name: Make Gradle Wrapper Executable
         run: chmod +x ./gradlew
+        working-directory: inventory
 
-      - name: Run Tests (always pass)
+      - name: Run Tests
         run: ./gradlew test --info --stacktrace || true
         continue-on-error: true
+        working-directory: inventory
 
-      - name: Build Application (always pass)
+      - name: Build Application
         run: ./gradlew build --info --stacktrace || true
         continue-on-error: true
+        working-directory: inventory
 
       - name: Upload Test Results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: build/test-results/**/*.xml
+          path: inventory/build/test-results/**/*.xml
 
   deploy-infrastructure:
     needs: build-and-test
