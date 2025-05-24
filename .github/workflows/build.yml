@@ -1,4 +1,3 @@
-
 name: CI/CD Pipeline
 
 on:
@@ -27,7 +26,6 @@ jobs:
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
-        working-directory: inventory
 
       - name: Make Gradle Wrapper Executable
         run: chmod +x ./gradlew
