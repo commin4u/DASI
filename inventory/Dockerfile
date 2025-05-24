@@ -7,4 +7,4 @@ FROM openjdk:17-slim
 WORKDIR /app
 COPY --from=build /home/gradle/project/build/libs/inventory-0.0.1-SNAPSHOT.jar inventory-service.jar
 EXPOSE 8080
-CMD ["java", "-jar", "inventory-service.jar"]
+CMD java -jar *.jar
