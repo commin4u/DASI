@@ -24,6 +24,16 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
 
@@ -32,13 +42,11 @@ jobs:
         working-directory: inventory
 
       - name: Run Tests
-        run: ./gradlew test --info --stacktrace || true
-        continue-on-error: true
+        run: ./gradlew test --info --stacktrace
         working-directory: inventory
 
       - name: Build Application
-        run: ./gradlew build --info --stacktrace || true
-        continue-on-error: true
+        run: ./gradlew build --info --stacktrace
         working-directory: inventory
 
       - name: Upload Test Results
@@ -71,7 +79,13 @@ jobs:
         run: terraform -chdir=infra validate
 
       - name: Terraform Plan
-        run: terraform -chdir=infra plan -input=false
+        run: terraform -chdir=infra plan -out=tfplan -input=false
+
+      - name: Upload Terraform Plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-plan
+          path: infra/tfplan
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'
@@ -96,8 +110,14 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Docker Image
-        run: docker build -t $DOCKER_REGISTRY/$REPO_LOWERCASE/$DOCKER_IMAGE_NAME:${{ github.sha }} .
+        run: docker build -t $DOCKER_REGISTRY/$REPO_LOWERCASE/$DOCKER_IMAGE_NAME:${{ github.sha }} inventory/
 
-      - name: Push Docker Image
-        run: docker push $DOCKER_REGISTRY/$REPO_LOWERCASE/$DOCKER_IMAGE_NAME:${{ github.sha }}
+      - name: Tag Docker Image as latest
+        run: |
+          docker tag $DOCKER_REGISTRY/$REPO_LOWERCASE/$DOCKER_IMAGE_NAME:${{ github.sha }} \
+                     $DOCKER_REGISTRY/$REPO_LOWERCASE/$DOCKER_IMAGE_NAME:latest
 
+      - name: Push Docker Images
+        run: |
+          docker push $DOCKER_REGISTRY/$REPO_LOWERCASE/$DOCKER_IMAGE_NAME:${{ github.sha }}
+          docker push $DOCKER_REGISTRY/$REPO_LOWERCASE/$DOCKER_IMAGE_NAME:latest
