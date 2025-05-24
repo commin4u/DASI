@@ -3,7 +3,6 @@ name: Deploy to Kubernetes
 on:
   workflow_run:
     workflows: ["CI/CD Pipeline"]
-    branches: [main]
     types:
       - completed
 
