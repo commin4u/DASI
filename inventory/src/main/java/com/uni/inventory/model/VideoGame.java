@@ -1,7 +1,7 @@
 package com.uni.inventory.model;
 
 import com.uni.inventory.model.enums.Platform;
-import com.uni.inventory.model.enums.Type;
+import com.uni.inventory.model.enums.RentalTier;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -13,7 +13,6 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Generated;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -37,13 +36,16 @@ public class VideoGame implements Item {
     private String title;
     //    The store has three types of VideoGames.
     //1. New releases – For each day rented, the <premium price> is charged.
+    //   Games released within last few months upon 1 year (0-12 months)
     //2. Regular VideoGames – A flat price of <basic price> is charged for the 3 days, and then
     //for each additional day <basic price> is charged per day.
+    //   Games released within the past 5 years
     //3. Old VideoGames – A flat price of <basic price> is charged for the first 5 days, and then
     //for each additional day <basic price> is charged per day.
+    //   Games released more than 5 years ago
 
     @Enumerated(EnumType.STRING)
-    private Type type;
+    private RentalTier rentalTier;
 
     @Enumerated(EnumType.STRING)
     private Platform platform;
