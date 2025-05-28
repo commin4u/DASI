@@ -1,6 +1,6 @@
 package com.uni.inventory.service;
 
-import com.uni.inventory.api.dto.request.VideoGameRequest;
+import com.uni.inventory.api.dto.request.VideoGameRequestDto;
 import com.uni.inventory.api.dto.response.VideoGameResponseDto;
 import com.uni.inventory.model.VideoGame;
 import com.uni.inventory.repository.VideoGameRepository;
@@ -41,13 +41,13 @@ public class VideoGameService extends ItemService {
     }
 
     @Transactional
-    public VideoGameResponseDto addVideoGame(final VideoGameRequest videoGameRequest) {
-        log.info("Adding new video game with title=[{}]", videoGameRequest.title());
+    public VideoGameResponseDto addVideoGame(final VideoGameRequestDto videoGameRequestDto) {
+        log.info("Adding new video game with title=[{}]", videoGameRequestDto.title());
 
         final VideoGameResponseDto videoGameResponse = mapVideoGameToVideoGameResponse
                 .apply(videoGameRepository
                         .save(mapVideoGameRequestToVideoGame
-                                .apply(videoGameRequest)));
+                                .apply(videoGameRequestDto)));
         rabbitTemplate.convertAndSend("notifying-queue", videoGameResponse.title());
 
 //        observerService.notifySubscribers(VideoGameRequest.getTitle());
@@ -56,21 +56,20 @@ public class VideoGameService extends ItemService {
     }
 
     @Transactional(readOnly = true)
-    public VideoGameResponseDto getVideoGameByTitle(final String title) {
-        log.info("Requested video game with title=[{}]", title);
+    public VideoGameResponseDto getVideoGameById(final Long videoGameId) {
+        log.info("Requested video game with title=[{}]", videoGameId);
 
-        final VideoGame videoGame = videoGameRepository.findVideoGameByTitle(title);
-
-        if (videoGame == null) {
-            log.warn("VideoGame with title=[{}] was not found in database", title);
-            throw new RecordNotFoundException(format("VideoGame with title %s was not found", title));
-        }
+        VideoGame videoGame = videoGameRepository.findById(videoGameId)
+                .orElseThrow(() -> {
+                    log.warn("Video game with id=[{}] was not found in database", videoGameId);
+                    return new RecordNotFoundException(format(messageVideoGameNotFound, videoGameId));
+                });
 
         return mapVideoGameToVideoGameResponse.apply(videoGame);
     }
 
     @Transactional
-    public VideoGameResponseDto updateVideoGame(final Long videoGameId, final VideoGameRequest videoGameRequest) {
+    public VideoGameResponseDto updateVideoGame(final Long videoGameId, final VideoGameRequestDto videoGameRequestDto) {
         log.info("Updating video game with id=[{}]", videoGameId);
 
         VideoGame videoGame = videoGameRepository.findById(videoGameId)
@@ -79,8 +78,8 @@ public class VideoGameService extends ItemService {
                     return new RecordNotFoundException(format(messageVideoGameNotFound, videoGameId));
                 });
 
-        videoGame.setType(videoGameRequest.type());
-        videoGame.setPlatform(videoGameRequest.platform());
+        videoGame.setRentalTier(videoGameRequestDto.rentalTier());
+        videoGame.setPlatform(videoGameRequestDto.platform());
 
         return mapVideoGameToVideoGameResponse.apply(videoGameRepository.save(videoGame));
     }

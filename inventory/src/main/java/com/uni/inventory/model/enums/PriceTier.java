@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum Price {
+public enum PriceTier {
     BASIC(30),
     PREMIUM(40);
 

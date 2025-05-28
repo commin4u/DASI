@@ -1,0 +1,11 @@
+package com.uni.order.api.dto.response;
+
+import lombok.Builder;
+
+@Builder
+public record OrderResponseDto(Long id,
+                               Long videoGameId,
+                               String rentalTier,
+                               Double rentalPrice,
+                               String orderStatus) {
+}

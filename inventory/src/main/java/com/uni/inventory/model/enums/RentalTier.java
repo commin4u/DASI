@@ -3,12 +3,12 @@ package com.uni.inventory.model.enums;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import static com.uni.inventory.model.enums.Price.BASIC;
-import static com.uni.inventory.model.enums.Price.PREMIUM;
+import static com.uni.inventory.model.enums.PriceTier.BASIC;
+import static com.uni.inventory.model.enums.PriceTier.PREMIUM;
 
 @RequiredArgsConstructor
 @Getter
-public enum Type {
+public enum RentalTier {
     NEW(1, PREMIUM),
     REGULAR(3, BASIC),
     OLD(5, BASIC);
@@ -16,5 +16,5 @@ public enum Type {
     //premium for 1 day of rent
     //default price for default numberOfRents
     private final Integer defaultNumberOfDaysOfRent;
-    private final Price priceType;
+    private final PriceTier priceType;
 }

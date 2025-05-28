@@ -1,6 +1,6 @@
 package com.uni.inventory.api.controller;
 
-import com.uni.inventory.api.dto.request.VideoGameRequest;
+import com.uni.inventory.api.dto.request.VideoGameRequestDto;
 import com.uni.inventory.api.dto.response.VideoGameResponseDto;
 import com.uni.inventory.api.exchange.Response;
 import com.uni.inventory.service.VideoGameService;
@@ -38,30 +38,29 @@ public class VideoGameController {
     }
 
     @PostMapping
-    public ResponseEntity<Response<VideoGameResponseDto>> addVideoGame(@RequestBody @Valid VideoGameRequest videoGameRequest, Errors validationErrors) {
+    public ResponseEntity<Response<VideoGameResponseDto>> addVideoGame(@RequestBody @Valid VideoGameRequestDto videoGameRequestDto, Errors validationErrors) {
         if (validationErrors.hasErrors()) {
             throw new ValidationException(validationErrors.getAllErrors().stream()
                     .map(ObjectError::getDefaultMessage)
                     .collect(Collectors.joining("; ")));
         }
 
-        return ok(Response.build(videoGameService.addVideoGame(videoGameRequest)));
+        return ok(Response.build(videoGameService.addVideoGame(videoGameRequestDto)));
     }
-
-    @GetMapping(params = {"videoGameTitle"})
-    public ResponseEntity<Response<VideoGameResponseDto>> getVideoGameByTitle(@RequestParam String videoGameTitle) {
-        return ok(Response.build(videoGameService.getVideoGameByTitle(videoGameTitle)));
+    @GetMapping("/{videoGameId}")
+    public ResponseEntity<Response<VideoGameResponseDto>> getVideoGameById(@PathVariable Long videoGameId) {
+        return ok(Response.build(videoGameService.getVideoGameById(videoGameId)));
     }
 
     @PutMapping("/{videoGameId}")
-    public VideoGameResponseDto updateVideoGame(@PathVariable Long videoGameId, @RequestBody @Valid VideoGameRequest videoGameRequest, Errors validationErrors) {
+    public VideoGameResponseDto updateVideoGame(@PathVariable Long videoGameId, @RequestBody @Valid VideoGameRequestDto videoGameRequestDto, Errors validationErrors) {
         if (validationErrors.hasErrors()) {
             throw new ValidationException(validationErrors.getAllErrors().stream()
                     .map(ObjectError::getDefaultMessage)
                     .collect(Collectors.joining("; ")));
         }
 
-        return videoGameService.updateVideoGame(videoGameId, videoGameRequest);
+        return videoGameService.updateVideoGame(videoGameId, videoGameRequestDto);
     }
 
     @DeleteMapping("/{videoGameId}")
