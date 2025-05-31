@@ -17,11 +17,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Clean Gradle Cache
-        run: |
-          rm -rf ~/.gradle/caches
-          rm -rf ~/.gradle/wrapper
-
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
