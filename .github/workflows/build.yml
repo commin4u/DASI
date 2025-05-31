@@ -17,6 +17,11 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Clean Gradle Cache
+        run: |
+          rm -rf ~/.gradle/caches
+          rm -rf ~/.gradle/wrapper
+
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
@@ -41,13 +46,11 @@ jobs:
         working-directory: inventory
 
       - name: Run Tests
-        run: ./gradlew test --info --stacktrace || true
-        continue-on-error: false
+        run: ./gradlew test --info --stacktrace
         working-directory: inventory
 
       - name: Build Application
-        run: ./gradlew build --info --stacktrace || true
-        continue-on-error: false
+        run: ./gradlew build --info --stacktrace
         working-directory: inventory
 
       - name: Upload Test Results
@@ -128,7 +131,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.CR_PAT || secrets.GITHUB_TOKEN }}
 
       - name: Build Docker Image
         run: docker build -t $DOCKER_REGISTRY/$REPO_LOWERCASE/$DOCKER_IMAGE_NAME:${{ github.sha }} inventory/
