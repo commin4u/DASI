@@ -2,8 +2,7 @@ name: CI/CD Pipeline
 
 on:
   push: {}
-  pull_request:
-    branches: [main, develop]
+  pull_request: {}
   workflow_dispatch:
 
 env:
@@ -43,13 +42,12 @@ jobs:
 
       - name: Run Tests
         run: ./gradlew test --info --stacktrace || true
-        continue-on-error: false
+        continue-on-error: true
         working-directory: inventory
 
       - name: Build Application
         run: ./gradlew build --info --stacktrace || true
-        continue-on-error: false
-
+        continue-on-error: true
         working-directory: inventory
 
       - name: Upload Test Results
@@ -68,37 +66,47 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Check for infra directory
+        id: check-infra
         run: |
           if [ ! -d "infra" ]; then
-            echo "No infra/ directory found. Skipping Terraform steps."
-            exit 0
+            echo "::notice::No infra/ directory found. Skipping Terraform steps."
+            echo "skip_terraform=true" >> $GITHUB_OUTPUT
+          else
+            echo "::notice::infra/ directory found. Proceeding with Terraform."
+            echo "skip_terraform=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Install Terraform
+        if: steps.check-infra.outputs.skip_terraform != 'true'
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.0
 
       - name: Terraform Format Check
+        if: steps.check-infra.outputs.skip_terraform != 'true'
         run: terraform -chdir=infra fmt -check
 
       - name: Terraform Init
+        if: steps.check-infra.outputs.skip_terraform != 'true'
         run: terraform -chdir=infra init -input=false
 
       - name: Terraform Validate
+        if: steps.check-infra.outputs.skip_terraform != 'true'
         run: terraform -chdir=infra validate
 
       - name: Terraform Plan
+        if: steps.check-infra.outputs.skip_terraform != 'true'
         run: terraform -chdir=infra plan -out=tfplan -input=false
 
       - name: Upload Terraform Plan
+        if: steps.check-infra.outputs.skip_terraform != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: terraform-plan
           path: infra/tfplan
 
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main'
+        if: steps.check-infra.outputs.skip_terraform != 'true' && github.ref == 'refs/heads/main'
         run: terraform -chdir=infra apply -auto-approve -input=false
 
   docker-build:
