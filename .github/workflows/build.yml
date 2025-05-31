@@ -42,12 +42,12 @@ jobs:
 
       - name: Run Tests
         run: ./gradlew test --info --stacktrace || true
-        continue-on-error: true
+        continue-on-error: false
         working-directory: inventory
 
       - name: Build Application
         run: ./gradlew build --info --stacktrace || true
-        continue-on-error: true
+        continue-on-error: false
         working-directory: inventory
 
       - name: Upload Test Results
