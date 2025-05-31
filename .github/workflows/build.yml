@@ -47,8 +47,6 @@ jobs:
 
 
 
-        working-directory: inventory
-
       - name: Build Application
         run: ./gradlew build --info --stacktrace
 
