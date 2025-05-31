@@ -43,6 +43,19 @@ jobs:
 
       - name: Make Gradle Wrapper Executable
         run: chmod +x ./gradlew
+        continue-on-error: true
+
+        working-directory: inventory
+
+      - name: Run Tests
+        run: ./gradlew test --info --stacktrace
+        continue-on-error: true
+
+        working-directory: inventory
+
+      - name: Build Application
+        run: ./gradlew build --info --stacktrace
+
         working-directory: inventory
 
       - name: Upload Test Results
