@@ -112,6 +112,9 @@ jobs:
   docker-build:
     needs: build-and-test
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
 
     steps:
       - name: Checkout Code
