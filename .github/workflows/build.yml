@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: CI/CD PipelineMore actions
 
 on:
   push: {}
@@ -13,44 +13,30 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:14-alpine
-        env:
-          POSTGRES_DB: testdb
-          POSTGRES_USER: runner
-          POSTGRES_PASSWORD: password
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-      rabbitmq:
-        image: rabbitmq:3-management
-        env:
-          RABBITMQ_DEFAULT_USER: dasi_rabbitmq_user
-          RABBITMQ_DEFAULT_PASS: pass
-        ports:
-          - 5672:5672
-          - 15672:15672
-        options: >-
-          --health-cmd "rabbitmq-diagnostics -q ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      - name: Clean Gradle Cache
+        run: |
+          rm -rf ~/.gradle/caches
+          rm -rf ~/.gradle/wrapper
 
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
@@ -59,32 +45,13 @@ jobs:
         run: chmod +x ./gradlew
         working-directory: inventory
 
-      - name: Run Tests
-        env:
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_NAME: testdb
-          DB_USER: runner
-          DB_PASSWORD: password
-          RABBITMQ_HOST: localhost
-          RABBITMQ_PORT: 5672
-          RABBITMQ_USER: dasi_rabbitmq_user
-          RABBITMQ_PASS: pass
-        run: ./gradlew test --info --stacktrace
+
+
         working-directory: inventory
 
       - name: Build Application
-        env:
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_NAME: testdb
-          DB_USER: runner
-          DB_PASSWORD: password
-          RABBITMQ_HOST: localhost
-          RABBITMQ_PORT: 5672
-          RABBITMQ_USER: dasi_rabbitmq_user
-          RABBITMQ_PASS: pass
         run: ./gradlew build --info --stacktrace
+
         working-directory: inventory
 
       - name: Upload Test Results
@@ -173,7 +140,7 @@ jobs:
       - name: Tag Docker Image as latest
         run: |
           docker tag $DOCKER_REGISTRY/$REPO_LOWERCASE/$DOCKER_IMAGE_NAME:${{ github.sha }} \
-                   $DOCKER_REGISTRY/$REPO_LOWERCASE/$DOCKER_IMAGE_NAME:latest
+                     $DOCKER_REGISTRY/$REPO_LOWERCASE/$DOCKER_IMAGE_NAME:latest
 
       - name: Push Docker Images
         run: |
