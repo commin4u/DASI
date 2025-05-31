@@ -28,6 +28,20 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
+      rabbitmq:
+        image: rabbitmq:3-management
+        env:
+          RABBITMQ_DEFAULT_USER: dasi_rabbitmq_user
+          RABBITMQ_DEFAULT_PASS: pass
+        ports:
+          - 5672:5672
+          - 15672:15672
+        options: >-
+          --health-cmd "rabbitmq-diagnostics -q ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -52,6 +66,10 @@ jobs:
           DB_NAME: testdb
           DB_USER: runner
           DB_PASSWORD: password
+          RABBITMQ_HOST: localhost
+          RABBITMQ_PORT: 5672
+          RABBITMQ_USER: dasi_rabbitmq_user
+          RABBITMQ_PASS: pass
         run: ./gradlew test --info --stacktrace
         working-directory: inventory
 
@@ -62,6 +80,10 @@ jobs:
           DB_NAME: testdb
           DB_USER: runner
           DB_PASSWORD: password
+          RABBITMQ_HOST: localhost
+          RABBITMQ_PORT: 5672
+          RABBITMQ_USER: dasi_rabbitmq_user
+          RABBITMQ_PASS: pass
         run: ./gradlew build --info --stacktrace
         working-directory: inventory
 
