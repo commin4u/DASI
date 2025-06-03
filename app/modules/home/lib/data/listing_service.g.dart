@@ -20,12 +20,12 @@ class _ListingService implements ListingService {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<DataResult<List<Listing>>> fetchListings() async {
+  Future<List<Listing>> fetchListings() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<DataResult<List<Listing>>>(
+    final _options = _setStreamType<List<Listing>>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -35,10 +35,13 @@ class _ListingService implements ListingService {
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
-    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late DataResult<List<Listing>> _value;
+    final _result = await _dio.fetch<List<dynamic>>(_options);
+    late List<Listing> _value;
     try {
-      _value = DataResult.fromJson(_result.data!);
+      _value =
+          _result.data!
+              .map((dynamic i) => Listing.fromJson(i as Map<String, dynamic>))
+              .toList();
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

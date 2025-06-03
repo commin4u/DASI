@@ -1,5 +1,4 @@
 import 'package:home/data/listing_service.dart';
-import 'package:home/domain/model/data_result.dart';
 import 'package:home/domain/model/listing.dart';
 
 abstract class ListingRepository {
@@ -24,10 +23,7 @@ class ListingRepositoryImpl implements ListingRepository {
   @override
   Future<List<Listing>> fetchListings() async {
     final result = await _listingService.fetchListings();
-    final data = result.data?.expand((i) => i!).toList();
-    return data ?? Future.error(
-      'Failed to fetch listings: ${result.error ?? 'Unknown error'}',
-    );
+    return result;
   }
 
   @override

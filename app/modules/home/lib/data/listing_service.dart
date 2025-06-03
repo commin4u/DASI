@@ -1,4 +1,4 @@
-import 'package:home/domain/model/data_result.dart';
+import 'package:core/data_result.dart';
 import 'package:home/domain/model/listing.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
@@ -10,5 +10,5 @@ abstract class ListingService {
   factory ListingService(Dio dio) = _ListingService;
 
   @GET('/all')
-  Future<DataResult<List<Listing>>> fetchListings();
+  Future<List<Listing>> fetchListings();
 }
