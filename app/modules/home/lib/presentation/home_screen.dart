@@ -17,7 +17,7 @@ class HomeScreen extends StatelessWidget {
       final b = ListingBuilder()
         ..description = 'Description of Game $element'
         ..id = '$element'
-        ..type = ListingType.accessory
+        ..rentalTier = RentalTier.accessory
         ..platform = Platform.xbox360
         ..imageUrl = 'https://fastly.picsum.photos/id/933/200/300.jpg?hmac=8zdipGWKGkHz8wyA9J63P3fzghuUL9wqV5Y34b8mLTI'
         ..title = 'Game $element';

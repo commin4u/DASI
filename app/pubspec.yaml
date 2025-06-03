@@ -24,6 +24,7 @@ dependencies:
   intl: ^0.20.2
   freezed_annotation: ^3.0.0
   json_annotation: ^4.9.0
+  retrofit: ^4.4.2
 
 dev_dependencies:
   bloc_test: ^10.0.0

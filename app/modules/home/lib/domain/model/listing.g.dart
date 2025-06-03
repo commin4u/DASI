@@ -6,11 +6,11 @@ part of 'listing.dart';
 // BuiltValueGenerator
 // **************************************************************************
 
-const ListingType _$game = const ListingType._('game');
-const ListingType _$accessory = const ListingType._('accessory');
-const ListingType _$console = const ListingType._('console');
+const RentalTier _$game = const RentalTier._('game');
+const RentalTier _$accessory = const RentalTier._('accessory');
+const RentalTier _$console = const RentalTier._('console');
 
-ListingType _$listingTypeValueOf(String name) {
+RentalTier _$listingTypeValueOf(String name) {
   switch (name) {
     case 'game':
       return _$game;
@@ -23,8 +23,8 @@ ListingType _$listingTypeValueOf(String name) {
   }
 }
 
-final BuiltSet<ListingType> _$listingTypeValues = BuiltSet<ListingType>(
-  const <ListingType>[_$game, _$accessory, _$console],
+final BuiltSet<RentalTier> _$listingTypeValues = BuiltSet<RentalTier>(
+  const <RentalTier>[_$game, _$accessory, _$console],
 );
 
 const Platform _$ps3 = const Platform._('ps3');
@@ -88,10 +88,10 @@ class _$ListingSerializer implements StructuredSerializer<Listing> {
       ),
       'id',
       serializers.serialize(object.id, specifiedType: const FullType(String)),
-      'type',
+      'videoGameRentalTier',
       serializers.serialize(
-        object.type,
-        specifiedType: const FullType(ListingType),
+        object.rentalTier,
+        specifiedType: const FullType(RentalTier),
       ),
       'platform',
       serializers.serialize(
@@ -115,6 +115,24 @@ class _$ListingSerializer implements StructuredSerializer<Listing> {
         ..add(
           serializers.serialize(value, specifiedType: const FullType(String)),
         );
+    }
+    value = object.pricePerRent;
+    if (value != null) {
+      result
+        ..add('pricePerRent')
+        ..add(serializers.serialize(value, specifiedType: const FullType(int)));
+    }
+    value = object.baseRentDays;
+    if (value != null) {
+      result
+        ..add('baseRentDays')
+        ..add(serializers.serialize(value, specifiedType: const FullType(int)));
+    }
+    value = object.pricePerAdditionalDay;
+    if (value != null) {
+      result
+        ..add('pricePerAdditionalDay')
+        ..add(serializers.serialize(value, specifiedType: const FullType(int)));
     }
     return result;
   }
@@ -165,13 +183,28 @@ class _$ListingSerializer implements StructuredSerializer<Listing> {
                   )!
                   as String;
           break;
-        case 'type':
-          result.type =
+        case 'pricePerRent':
+          result.pricePerRent =
+              serializers.deserialize(value, specifiedType: const FullType(int))
+                  as int?;
+          break;
+        case 'baseRentDays':
+          result.baseRentDays =
+              serializers.deserialize(value, specifiedType: const FullType(int))
+                  as int?;
+          break;
+        case 'pricePerAdditionalDay':
+          result.pricePerAdditionalDay =
+              serializers.deserialize(value, specifiedType: const FullType(int))
+                  as int?;
+          break;
+        case 'videoGameRentalTier':
+          result.rentalTier =
               serializers.deserialize(
                     value,
-                    specifiedType: const FullType(ListingType),
+                    specifiedType: const FullType(RentalTier),
                   )!
-                  as ListingType;
+                  as RentalTier;
           break;
         case 'platform':
           result.platform =
@@ -198,7 +231,13 @@ class _$Listing extends Listing {
   @override
   final String id;
   @override
-  final ListingType type;
+  final int? pricePerRent;
+  @override
+  final int? baseRentDays;
+  @override
+  final int? pricePerAdditionalDay;
+  @override
+  final RentalTier rentalTier;
   @override
   final Platform platform;
 
@@ -210,7 +249,10 @@ class _$Listing extends Listing {
     this.description,
     this.imageUrl,
     required this.id,
-    required this.type,
+    this.pricePerRent,
+    this.baseRentDays,
+    this.pricePerAdditionalDay,
+    required this.rentalTier,
     required this.platform,
   }) : super._();
   @override
@@ -228,7 +270,10 @@ class _$Listing extends Listing {
         description == other.description &&
         imageUrl == other.imageUrl &&
         id == other.id &&
-        type == other.type &&
+        pricePerRent == other.pricePerRent &&
+        baseRentDays == other.baseRentDays &&
+        pricePerAdditionalDay == other.pricePerAdditionalDay &&
+        rentalTier == other.rentalTier &&
         platform == other.platform;
   }
 
@@ -239,7 +284,10 @@ class _$Listing extends Listing {
     _$hash = $jc(_$hash, description.hashCode);
     _$hash = $jc(_$hash, imageUrl.hashCode);
     _$hash = $jc(_$hash, id.hashCode);
-    _$hash = $jc(_$hash, type.hashCode);
+    _$hash = $jc(_$hash, pricePerRent.hashCode);
+    _$hash = $jc(_$hash, baseRentDays.hashCode);
+    _$hash = $jc(_$hash, pricePerAdditionalDay.hashCode);
+    _$hash = $jc(_$hash, rentalTier.hashCode);
     _$hash = $jc(_$hash, platform.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
@@ -252,7 +300,10 @@ class _$Listing extends Listing {
           ..add('description', description)
           ..add('imageUrl', imageUrl)
           ..add('id', id)
-          ..add('type', type)
+          ..add('pricePerRent', pricePerRent)
+          ..add('baseRentDays', baseRentDays)
+          ..add('pricePerAdditionalDay', pricePerAdditionalDay)
+          ..add('rentalTier', rentalTier)
           ..add('platform', platform))
         .toString();
   }
@@ -277,9 +328,22 @@ class ListingBuilder implements Builder<Listing, ListingBuilder> {
   String? get id => _$this._id;
   set id(String? id) => _$this._id = id;
 
-  ListingType? _type;
-  ListingType? get type => _$this._type;
-  set type(ListingType? type) => _$this._type = type;
+  int? _pricePerRent;
+  int? get pricePerRent => _$this._pricePerRent;
+  set pricePerRent(int? pricePerRent) => _$this._pricePerRent = pricePerRent;
+
+  int? _baseRentDays;
+  int? get baseRentDays => _$this._baseRentDays;
+  set baseRentDays(int? baseRentDays) => _$this._baseRentDays = baseRentDays;
+
+  int? _pricePerAdditionalDay;
+  int? get pricePerAdditionalDay => _$this._pricePerAdditionalDay;
+  set pricePerAdditionalDay(int? pricePerAdditionalDay) =>
+      _$this._pricePerAdditionalDay = pricePerAdditionalDay;
+
+  RentalTier? _rentalTier;
+  RentalTier? get rentalTier => _$this._rentalTier;
+  set rentalTier(RentalTier? rentalTier) => _$this._rentalTier = rentalTier;
 
   Platform? _platform;
   Platform? get platform => _$this._platform;
@@ -294,7 +358,10 @@ class ListingBuilder implements Builder<Listing, ListingBuilder> {
       _description = $v.description;
       _imageUrl = $v.imageUrl;
       _id = $v.id;
-      _type = $v.type;
+      _pricePerRent = $v.pricePerRent;
+      _baseRentDays = $v.baseRentDays;
+      _pricePerAdditionalDay = $v.pricePerAdditionalDay;
+      _rentalTier = $v.rentalTier;
       _platform = $v.platform;
       _$v = null;
     }
@@ -326,7 +393,14 @@ class ListingBuilder implements Builder<Listing, ListingBuilder> {
           description: description,
           imageUrl: imageUrl,
           id: BuiltValueNullFieldError.checkNotNull(id, r'Listing', 'id'),
-          type: BuiltValueNullFieldError.checkNotNull(type, r'Listing', 'type'),
+          pricePerRent: pricePerRent,
+          baseRentDays: baseRentDays,
+          pricePerAdditionalDay: pricePerAdditionalDay,
+          rentalTier: BuiltValueNullFieldError.checkNotNull(
+            rentalTier,
+            r'Listing',
+            'rentalTier',
+          ),
           platform: BuiltValueNullFieldError.checkNotNull(
             platform,
             r'Listing',
