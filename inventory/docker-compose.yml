@@ -32,7 +32,7 @@ services:
       context: ./
     container_name: inventory_service
     ports:
-      - "8082:8082"
+      - "8085:8085"
     depends_on:
       postgres:
         condition: service_started
