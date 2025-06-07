@@ -1,0 +1,159 @@
+services:
+  auth-service:
+    build:
+      context: ./auth
+    container_name: auth_server
+    ports:
+      - "9000:9000"
+    networks:
+      - rental_store_network
+    depends_on:
+      postgres_auth:
+        condition: service_healthy
+    environment:
+      DB_HOST: auth_server_db
+      DB_PORT: 5432
+      DB_NAME: authorization_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq_rental_store
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - rental_store_network
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 5s
+      timeout: 10s
+      retries: 3
+
+  inventory-service:
+    build:
+      context: ./inventory
+    container_name: inventory_service
+    ports:
+      - "8085:8085"
+    networks:
+      - rental_store_network
+    depends_on:
+      auth-service:
+        condition: service_started
+      postgres_inventory:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      DB_HOST: inventory_service_db
+      DB_PORT: 5432
+      DB_NAME: rental_store_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: guest
+      RABBITMQ_PASSWORD: guest
+
+  order_service:
+    build:
+      context: ./order
+    container_name: order_service
+    ports:
+      - "8089:8089"
+    networks:
+      - rental_store_network
+    depends_on:
+      postgres_order:
+        condition: service_healthy
+      inventory-service:
+        condition: service_started
+    environment:
+      DB_HOST: order_service_db
+      DB_PORT: 5432
+      DB_NAME: order_store_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      INVENTORY_SERVICE_HOST: inventory-service
+      INVENTORY_SERVICE_PORT: 8085
+
+### DBs for each service
+  postgres_auth:
+    image: postgres:16
+    container_name: auth_server_db
+    restart: always
+    networks:
+      - rental_store_network
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: authorization_db
+    ports:
+      - "5435:5432"
+    volumes:
+      - pgdata_auth:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 5s
+
+  postgres_inventory:
+    image: postgres:16
+    container_name: inventory_service_db
+    restart: always
+    networks:
+      - rental_store_network
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: rental_store_db
+    ports:
+      - "5436:5432"
+    volumes:
+      - pgdata_inventory:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 5s
+
+  postgres_order:
+    image: postgres:16
+    container_name: order_service_db
+    restart: always
+    networks:
+      - rental_store_network
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: order_store_db
+    ports:
+      - "5437:5432"
+    volumes:
+      - pgdata_order:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 5s
+
+networks:
+  rental_store_network:
+    driver: bridge
+
+volumes:
+  pgdata_auth:
+    driver: local
+  pgdata_inventory:
+    driver: local
+  pgdata_order:
+    driver: local

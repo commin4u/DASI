@@ -1,0 +1,530 @@
+{
+	"info": {
+		"_postman_id": "c07f8b6c-20ce-4479-982f-34715f6ea7f9",
+		"name": "Video games Rental Store",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "7143588",
+		"_collection_link": "https://red-comet-889028.postman.co/workspace/Internship~07d39245-c56d-40d4-a0b8-0a1a21e220af/collection/7143588-c07f8b6c-20ce-4479-982f-34715f6ea7f9?action=share&source=collection_link&creator=7143588"
+	},
+	"item": [
+		{
+			"name": "Get games",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiZW1haWwiOiJ0ZXN0X3VzZXJfMEBnbWFpbC5jb20iLCJpYXQiOjE3NDkzMDYxOTMsImV4cCI6MTc0OTMwOTc5M30.PL4SGBi0KW_hMQCsCNEAs6CDWLAWu8JRMyHMKXapcm8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{URL}}:{{inventory_service_port}}/api/video-game/all",
+					"protocol": "http",
+					"host": [
+						"{{URL}}"
+					],
+					"port": "{{inventory_service_port}}",
+					"path": [
+						"api",
+						"video-game",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get games By ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{URL}}:{{inventory_service_port}}/api/video-game/2",
+					"protocol": "http",
+					"host": [
+						"{{URL}}"
+					],
+					"port": "{{inventory_service_port}}",
+					"path": [
+						"api",
+						"video-game",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get games Copy",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{URL}}:{{inventory_service_port}}/api/video-game/1",
+					"protocol": "http",
+					"host": [
+						"{{URL}}"
+					],
+					"port": "{{inventory_service_port}}",
+					"path": [
+						"api",
+						"video-game",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add game (negative flow)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{URL}}:{{inventory_service_port}}}}/api/video-game",
+					"protocol": "http",
+					"host": [
+						"{{URL}}"
+					],
+					"port": "{{inventory_service_port}}}}",
+					"path": [
+						"api",
+						"video-game"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add game With Img",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "test_qqqq",
+							"type": "text"
+						},
+						{
+							"key": "rentalTier",
+							"value": "NEW",
+							"type": "text"
+						},
+						{
+							"key": "platform",
+							"value": "PC",
+							"type": "text"
+						},
+						{
+							"key": "image",
+							"type": "file",
+							"src": "/Users/xdamanciuc/IdeaProjects/DASI/inventory/spider_man.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://{{URL}}:{{inventory_service_port}}/api/video-game",
+					"protocol": "http",
+					"host": [
+						"{{URL}}"
+					],
+					"port": "{{inventory_service_port}}",
+					"path": [
+						"api",
+						"video-game"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update game With Img",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "The last of us (Part I)",
+							"type": "text"
+						},
+						{
+							"key": "rentalTier",
+							"value": "OLD",
+							"type": "text"
+						},
+						{
+							"key": "platform",
+							"value": "PS4",
+							"type": "text"
+						},
+						{
+							"key": "image",
+							"type": "file",
+							"src": "/Users/xdamanciuc/IdeaProjects/DASI/inventory/last_of_us.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://{{URL}}:{{inventory_service_port}}/api/video-game/1",
+					"protocol": "http",
+					"host": [
+						"{{URL}}"
+					],
+					"port": "{{inventory_service_port}}",
+					"path": [
+						"api",
+						"video-game",
+						"1"
+					],
+					"query": [
+						{
+							"key": "title",
+							"value": "Test",
+							"disabled": true
+						},
+						{
+							"key": "rentalTier",
+							"value": "NEW",
+							"disabled": true
+						},
+						{
+							"key": "platform",
+							"value": "PC",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get price for game",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"numberOfDays\": \"30\",\n    \"startDate\": \"30-05-2025\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{URL}}:{{order_service_port}}/api/price/1",
+					"protocol": "http",
+					"host": [
+						"{{URL}}"
+					],
+					"port": "{{order_service_port}}",
+					"path": [
+						"api",
+						"price",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all orders for current user",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"numberOfDays\": \"30\",\n    \"startDate\": \"30-05-2025\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{URL}}:{{order_service_port}}/api/order/all",
+					"protocol": "http",
+					"host": [
+						"{{URL}}"
+					],
+					"port": "{{order_service_port}}",
+					"path": [
+						"api",
+						"order",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get unavailable periods for videoGame",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"numberOfDays\": \"30\",\n    \"startDate\": \"30-05-2025\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{URL}}:{{order_service_port}}/api/order/unavailable-periods/1",
+					"protocol": "http",
+					"host": [
+						"{{URL}}"
+					],
+					"port": "{{order_service_port}}",
+					"path": [
+						"api",
+						"order",
+						"unavailable-periods",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get order details",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiZW1haWwiOiJ0ZXN0X3VzZXJfMEBnbWFpbC5jb20iLCJpYXQiOjE3NDkzMTIzNDUsImV4cCI6MTc0OTMxNTk0NX0.7Z0tplgSwXE5rVRLoAvhA44xfACTr_Moc_4JhXTAEqw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"numberOfDays\": \"30\",\n    \"startDate\": \"30-05-2025\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{URL}}:{{order_service_port}}/api/order/1",
+					"protocol": "http",
+					"host": [
+						"{{URL}}"
+					],
+					"port": "{{order_service_port}}",
+					"path": [
+						"api",
+						"order",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Place order",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiZW1haWwiOiJ0ZXN0X3VzZXJfMEBnbWFpbC5jb20iLCJpYXQiOjE3NDkzMTIzNDUsImV4cCI6MTc0OTMxNTk0NX0.7Z0tplgSwXE5rVRLoAvhA44xfACTr_Moc_4JhXTAEqw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"numberOfDays\": \"30\",\n    \"startDate\": \"30-05-2025\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{URL}}:{{order_service_port}}/api/order/4",
+					"protocol": "http",
+					"host": [
+						"{{URL}}"
+					],
+					"port": "{{order_service_port}}",
+					"path": [
+						"api",
+						"order",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"test_user_0@gmail.com\",\n    \"password\": \"test\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{URL}}:{{auth-service-port}}/authentication/register",
+					"protocol": "http",
+					"host": [
+						"{{URL}}"
+					],
+					"port": "{{auth-service-port}}",
+					"path": [
+						"authentication",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login (Get access token)",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "test_user_0@gmail.com",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://{{URL}}:{{auth-service-port}}/authentication/login",
+					"protocol": "http",
+					"host": [
+						"{{URL}}"
+					],
+					"port": "{{auth-service-port}}",
+					"path": [
+						"authentication",
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{auth_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "auth_token",
+			"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiZW1haWwiOiJ0ZXN0X3VzZXJfMEBnbWFpbC5jb20iLCJpYXQiOjE3NDkzMDYxOTMsImV4cCI6MTc0OTMwOTc5M30.PL4SGBi0KW_hMQCsCNEAs6CDWLAWu8JRMyHMKXapcm8"
+		},
+		{
+			"key": "inventory_service_port",
+			"value": "8085",
+			"type": "string"
+		},
+		{
+			"key": "order_service_port",
+			"value": "8089",
+			"type": "string"
+		},
+		{
+			"key": "URL",
+			"value": "localhost",
+			"type": "string"
+		}
+	]
+}

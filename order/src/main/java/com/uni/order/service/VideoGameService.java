@@ -3,29 +3,42 @@ package com.uni.order.service;
 import com.uni.order.api.dto.response.InventoryServiceApiResponse;
 import com.uni.order.api.dto.response.VideoGameResponse;
 import com.uni.order.config.VideoGameServiceConfig;
+import com.uni.order.utils.security.AuthorizationUtility;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import static java.lang.String.format;
 
 @Slf4j
 @Service
 public class VideoGameService {
 
     private final RestTemplate restTemplate;
-    private final VideoGameServiceConfig videoGameServiceConfig;
+
+    @Value("${video-game.base-path}")
+    private String videoGameServiceBasePath;
 
     @Autowired
-    public VideoGameService(RestTemplateBuilder restTemplateBuilder,
-                            VideoGameServiceConfig config) {
+    public VideoGameService(RestTemplateBuilder restTemplateBuilder) {
         this.restTemplate = restTemplateBuilder.build();
-        this.videoGameServiceConfig = config;
     }
 
     public VideoGameResponse getVideoGameById(final Long videoGameId) {
         log.info("Requesting game with id=[{}] from inventory service", videoGameId);
-        InventoryServiceApiResponse serviceApiResponse = restTemplate.getForObject(videoGameServiceConfig.getVideoGameFullPath(), InventoryServiceApiResponse.class, videoGameId);
+
+        HttpEntity<InventoryServiceApiResponse> serviceApiResponseHttpEntity =
+                new HttpEntity<>(AuthorizationUtility.prepareHeaderForRestCall());
+
+
+        InventoryServiceApiResponse serviceApiResponse =
+                restTemplate.exchange(videoGameServiceBasePath + videoGameId, HttpMethod.GET, serviceApiResponseHttpEntity, InventoryServiceApiResponse.class).getBody();
 
         if (serviceApiResponse != null && serviceApiResponse.data() != null) {
             log.info("Game with id=[{}] from inventory service was identified", videoGameId);

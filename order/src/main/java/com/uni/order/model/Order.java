@@ -47,4 +47,7 @@ public class Order {
 
     @Column
     private LocalDateTime endDate;
+
+    @Column(name = "requested_by_user_id")
+    private Long requestedByUserId;
 }
