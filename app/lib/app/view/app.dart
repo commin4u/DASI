@@ -7,11 +7,14 @@ import 'package:dasi/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:home/data/listing_repository.dart';
+import 'package:home/data/listing_service.dart';
 import 'package:home/domain/blocs/listing_cubit.dart';
 import 'package:home/presentation/create_listing_screen.dart';
 import 'package:home/presentation/create_order_screen.dart';
 import 'package:home/presentation/home_screen.dart';
 import 'package:home/presentation/listing_details_screen.dart';
+import 'package:dio/dio.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -67,6 +70,23 @@ class App extends StatelessWidget {
     final textTheme = createTextTheme(context, 'Belanosima', 'Belanosima');
     final theme = MaterialTheme(textTheme);
 
+    final dio = Dio(
+      BaseOptions(
+        baseUrl: 'http://10.0.2.2:8082',
+        connectTimeout: const Duration(milliseconds: 5000),
+        receiveTimeout: const Duration(milliseconds: 3000),
+      ),
+    );
+
+    dio.interceptors.addAll(
+      <Interceptor>[
+        LogInterceptor(
+          responseBody: true,
+          logPrint: (o) => debugPrint(o.toString()),
+        ),
+      ],
+    );
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<LoginCubit>(
@@ -75,7 +95,14 @@ class App extends StatelessWidget {
           ),
         ),
         BlocProvider<ListingCubit>(
-          create: (BuildContext context) => ListingCubit(),
+          create: (BuildContext context) => ListingCubit(
+            listingRepository: ListingRepositoryImpl(
+              listingService: ListingService(
+                dio
+                ,
+              ),
+            ),
+          ),
         ),
       ],
       child: MaterialApp.router(

@@ -1,6 +1,7 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
+import 'package:home/domain/model/serializers.dart';
 
 part 'listing.g.dart';
 
@@ -10,6 +11,8 @@ abstract class Listing implements Built<Listing, ListingBuilder> {
 
   factory Listing([void Function(ListingBuilder) updates]) = _$Listing;
 
+  factory Listing.fromJson(Map<String, dynamic> json) => serializers.deserializeWith(serializer, json)!;
+
   static Serializer<Listing> get serializer => _$listingSerializer;
 
   String get title;
@@ -17,20 +20,25 @@ abstract class Listing implements Built<Listing, ListingBuilder> {
   String? get imageUrl;
   String get id;
 
-  ListingType get type;
+  int? get pricePerRent;
+  int? get baseRentDays;
+  int? get pricePerAdditionalDay;
+
+  @BuiltValueField(wireName: 'videoGameRentalTier')
+  RentalTier get rentalTier;
 
   Platform get platform;
 }
 
-class ListingType extends EnumClass {
-  static const ListingType game = _$game;
-  static const ListingType accessory = _$accessory;
-  static const ListingType console = _$console;
+class RentalTier extends EnumClass {
+  static const RentalTier game = _$game;
+  static const RentalTier accessory = _$accessory;
+  static const RentalTier console = _$console;
 
-  const ListingType._(super.name);
+  const RentalTier._(super.name);
 
-  static BuiltSet<ListingType> get values => _$listingTypeValues;
-  static ListingType valueOf(String name) => _$listingTypeValueOf(name);
+  static BuiltSet<RentalTier> get values => _$listingTypeValues;
+  static RentalTier valueOf(String name) => _$listingTypeValueOf(name);
 }
 
 class Platform extends EnumClass {
