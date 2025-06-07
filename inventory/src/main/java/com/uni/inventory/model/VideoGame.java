@@ -45,8 +45,15 @@ public class VideoGame implements Item {
     //   Games released more than 5 years ago
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "rental_tier")
     private RentalTier rentalTier;
 
     @Enumerated(EnumType.STRING)
     private Platform platform;
+
+    @Column(name = "image_content_type")
+    private String imageContentType;
+
+    @Column(name = "image_data", columnDefinition = "BYTEA")
+    private byte[] imageData;
 }

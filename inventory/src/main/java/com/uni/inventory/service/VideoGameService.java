@@ -11,7 +11,9 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 import static com.uni.inventory.utils.mappers.VideoGameMapper.mapVideoGameRequestToVideoGame;
@@ -41,13 +43,18 @@ public class VideoGameService extends ItemService {
     }
 
     @Transactional
-    public VideoGameResponseDto addVideoGame(final VideoGameRequestDto videoGameRequestDto) {
-        log.info("Adding new video game with title=[{}]", videoGameRequestDto.title());
+    public VideoGameResponseDto addVideoGame(final VideoGameRequestDto videoGameRequestDto) throws IOException {
+        log.info("Adding new video game with title=[{}]", videoGameRequestDto.getTitle());
+
+        final String contentType = validateContentType(videoGameRequestDto.getImage());
+        final VideoGame videoGame = mapVideoGameRequestToVideoGame
+                .apply(videoGameRequestDto);
+
+        videoGame.setImageData(videoGameRequestDto.getImage().getBytes());
+        videoGame.setImageContentType(contentType);
 
         final VideoGameResponseDto videoGameResponse = mapVideoGameToVideoGameResponse
-                .apply(videoGameRepository
-                        .save(mapVideoGameRequestToVideoGame
-                                .apply(videoGameRequestDto)));
+                .apply(videoGameRepository.save(videoGame));
         rabbitTemplate.convertAndSend("notifying-queue", videoGameResponse.title());
 
 //        observerService.notifySubscribers(VideoGameRequest.getTitle());
@@ -69,8 +76,9 @@ public class VideoGameService extends ItemService {
     }
 
     @Transactional
-    public VideoGameResponseDto updateVideoGame(final Long videoGameId, final VideoGameRequestDto videoGameRequestDto) {
+    public VideoGameResponseDto updateVideoGame(final Long videoGameId, final VideoGameRequestDto videoGameRequestDto) throws IOException {
         log.info("Updating video game with id=[{}]", videoGameId);
+        final String contentType = validateContentType(videoGameRequestDto.getImage());
 
         VideoGame videoGame = videoGameRepository.findById(videoGameId)
                 .orElseThrow(() -> {
@@ -78,8 +86,10 @@ public class VideoGameService extends ItemService {
                     return new RecordNotFoundException(format(messageVideoGameNotFound, videoGameId));
                 });
 
-        videoGame.setRentalTier(videoGameRequestDto.rentalTier());
-        videoGame.setPlatform(videoGameRequestDto.platform());
+        videoGame.setRentalTier(videoGameRequestDto.getRentalTier());
+        videoGame.setPlatform(videoGameRequestDto.getPlatform());
+        videoGame.setImageData(videoGameRequestDto.getImage().getBytes());
+        videoGame.setImageContentType(contentType);
 
         return mapVideoGameToVideoGameResponse.apply(videoGameRepository.save(videoGame));
     }
@@ -89,5 +99,16 @@ public class VideoGameService extends ItemService {
         log.info("Deleting video game with id=[{}]", videoGameId);
 
         videoGameRepository.deleteById(videoGameId);
+    }
+
+
+    private String validateContentType(final MultipartFile multipartFile) {
+        String contentType = multipartFile.getContentType();
+        if (contentType == null ||
+                (!contentType.equals("image/jpeg") && !contentType.equals("image/png"))) {
+            throw new IllegalArgumentException("Only JPEG and PNG images are allowed.");
+        }
+
+        return contentType;
     }
 }
