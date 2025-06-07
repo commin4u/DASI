@@ -56,4 +56,7 @@ public class VideoGame implements Item {
 
     @Column(name = "image_data", columnDefinition = "BYTEA")
     private byte[] imageData;
+
+    @Column(name = "added_by_user_id")
+    private Long addedByUserId;
 }

@@ -4,7 +4,9 @@ import com.uni.inventory.api.dto.request.VideoGameRequestDto;
 import com.uni.inventory.api.dto.response.VideoGameResponseDto;
 import com.uni.inventory.model.VideoGame;
 import com.uni.inventory.repository.VideoGameRepository;
+import com.uni.inventory.utils.exceptions.IllegalOperationException;
 import com.uni.inventory.utils.exceptions.RecordNotFoundException;
+import com.uni.inventory.utils.security.ContextHolderUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -49,28 +51,33 @@ public class VideoGameService extends ItemService {
         final String contentType = validateContentType(videoGameRequestDto.getImage());
         final VideoGame videoGame = mapVideoGameRequestToVideoGame
                 .apply(videoGameRequestDto);
+        Long userId = validateUserOperationAngGetUserId(videoGame, "create");
 
         videoGame.setImageData(videoGameRequestDto.getImage().getBytes());
         videoGame.setImageContentType(contentType);
+        videoGame.setAddedByUserId(userId);
+
+        VideoGame savedVideoGame = videoGameRepository.save(videoGame);
+
+        log.info("A new video game with title=[{}] was added by user with id=[{}]", videoGameRequestDto.getTitle(), userId);
 
         final VideoGameResponseDto videoGameResponse = mapVideoGameToVideoGameResponse
-                .apply(videoGameRepository.save(videoGame));
+                .apply(savedVideoGame);
         rabbitTemplate.convertAndSend("notifying-queue", videoGameResponse.title());
-
-//        observerService.notifySubscribers(VideoGameRequest.getTitle());
 
         return videoGameResponse;
     }
 
     @Transactional(readOnly = true)
     public VideoGameResponseDto getVideoGameById(final Long videoGameId) {
-        log.info("Requested video game with title=[{}]", videoGameId);
-
         VideoGame videoGame = videoGameRepository.findById(videoGameId)
                 .orElseThrow(() -> {
                     log.warn("Video game with id=[{}] was not found in database", videoGameId);
                     return new RecordNotFoundException(format(messageVideoGameNotFound, videoGameId));
                 });
+        Long userId = validateUserOperationAngGetUserId(videoGame, "list");
+
+        log.info("Requested details about video game with title=[{}] by user with id=[{}]", videoGameId, userId);
 
         return mapVideoGameToVideoGameResponse.apply(videoGame);
     }
@@ -86,21 +93,31 @@ public class VideoGameService extends ItemService {
                     return new RecordNotFoundException(format(messageVideoGameNotFound, videoGameId));
                 });
 
+        Long userId = validateUserOperationAngGetUserId(videoGame, "update");
+
         videoGame.setRentalTier(videoGameRequestDto.getRentalTier());
         videoGame.setPlatform(videoGameRequestDto.getPlatform());
         videoGame.setImageData(videoGameRequestDto.getImage().getBytes());
         videoGame.setImageContentType(contentType);
+        videoGame.setAddedByUserId(userId);
+
+        log.info("Video game with id=[{}] was updated by user with id=[{}]", videoGameId, userId);
 
         return mapVideoGameToVideoGameResponse.apply(videoGameRepository.save(videoGame));
     }
 
     @Transactional
     public void deleteVideoGame(final Long videoGameId) {
-        log.info("Deleting video game with id=[{}]", videoGameId);
+        VideoGame videoGame = videoGameRepository.findById(videoGameId)
+                .orElseThrow(() -> {
+                    log.warn("Video game with id=[{}] was not found in database", videoGameId);
+                    return new RecordNotFoundException(format(messageVideoGameNotFound, videoGameId));
+                });
 
+        Long userId = validateUserOperationAngGetUserId(videoGame, "delete");
         videoGameRepository.deleteById(videoGameId);
+        log.info("A video game with id=[{}] was deleted by user with id=[{}]", videoGameId, userId);
     }
-
 
     private String validateContentType(final MultipartFile multipartFile) {
         String contentType = multipartFile.getContentType();
@@ -111,4 +128,22 @@ public class VideoGameService extends ItemService {
 
         return contentType;
     }
+
+    private Long validateUserOperationAngGetUserId(VideoGame videoGame, String operation) {
+        String extractedUserId = ContextHolderUtils.getUserId();
+        if (extractedUserId != null) {
+            final Long userId = Long.valueOf(extractedUserId);
+
+            if (operation.equals("create") || operation.equals("list")) {
+                return userId;
+            } else if (videoGame.getAddedByUserId().equals(userId)) {
+                return userId;
+            } else {
+                throw new IllegalOperationException("User with id=[" + userId + "] is trying to " + operation + " an item added by another user");
+            }
+        } else {
+            return null;
+        }
+    }
 }
+

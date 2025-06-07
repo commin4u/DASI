@@ -4,6 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record VideoGameResponseDto(Long id,
+                                   Long addedByUserId,
                                    String title,
                                    String videoGameRentalTier,
                                    Integer pricePerRent,

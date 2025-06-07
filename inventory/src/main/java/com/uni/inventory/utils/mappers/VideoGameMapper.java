@@ -22,6 +22,7 @@ public class VideoGameMapper {
     public static final Function<VideoGame, VideoGameResponseDto> mapVideoGameToVideoGameResponse =
             videoGame -> VideoGameResponseDto.builder()
                     .id(videoGame.getId())
+                    .addedByUserId(videoGame.getAddedByUserId())
                     .title(videoGame.getTitle())
                     .platform(String.valueOf(videoGame.getPlatform()))
                     .videoGameRentalTier(String.valueOf(videoGame.getRentalTier()))
