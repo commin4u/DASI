@@ -19,8 +19,9 @@ public class OrderMapper {
                     .videoGameId(order.getVideoGameId())
                     .orderStatus(String.valueOf(order.getOrderStatus()))
                     .rentalPrice(order.getRentalPrice())
+                    .startDate(order.getStartDate().format(DATE_FORMAT))
+                    .endDate(order.getEndDate().format(DATE_FORMAT))
                     .build();
-
     public static final Function<OrderRequestDto, Order> mapOrderRequestDtoToOrder =
             orderRequestDto -> Order.builder()
                     .startDate(LocalDate.parse(orderRequestDto.startDate(), DATE_FORMAT).atStartOfDay())

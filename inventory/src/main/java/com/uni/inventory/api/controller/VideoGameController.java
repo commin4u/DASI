@@ -12,14 +12,14 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,8 +37,9 @@ public class VideoGameController {
         return ok(Response.build(videoGameService.getAllVideoGames()));
     }
 
-    @PostMapping
-    public ResponseEntity<Response<VideoGameResponseDto>> addVideoGame(@RequestBody @Valid VideoGameRequestDto videoGameRequestDto, Errors validationErrors) {
+    @PostMapping(consumes = "multipart/form-data")
+    public ResponseEntity<Response<VideoGameResponseDto>> addVideoGame_withImg(@ModelAttribute @Valid VideoGameRequestDto videoGameRequestDto,
+                                                                               Errors validationErrors) throws IOException {
         if (validationErrors.hasErrors()) {
             throw new ValidationException(validationErrors.getAllErrors().stream()
                     .map(ObjectError::getDefaultMessage)
@@ -47,13 +48,16 @@ public class VideoGameController {
 
         return ok(Response.build(videoGameService.addVideoGame(videoGameRequestDto)));
     }
+
     @GetMapping("/{videoGameId}")
     public ResponseEntity<Response<VideoGameResponseDto>> getVideoGameById(@PathVariable Long videoGameId) {
         return ok(Response.build(videoGameService.getVideoGameById(videoGameId)));
     }
 
-    @PutMapping("/{videoGameId}")
-    public VideoGameResponseDto updateVideoGame(@PathVariable Long videoGameId, @RequestBody @Valid VideoGameRequestDto videoGameRequestDto, Errors validationErrors) {
+    @PutMapping(value = "/{videoGameId}", consumes = "multipart/form-data")
+    public VideoGameResponseDto updateVideoGame(@PathVariable Long videoGameId,
+                                                @ModelAttribute @Valid VideoGameRequestDto videoGameRequestDto,
+                                                Errors validationErrors) throws IOException {
         if (validationErrors.hasErrors()) {
             throw new ValidationException(validationErrors.getAllErrors().stream()
                     .map(ObjectError::getDefaultMessage)
