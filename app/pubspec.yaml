@@ -1,0 +1,41 @@
+name: dasi
+description: A Very Good App
+version: 1.0.0+1
+publish_to: none
+
+environment:
+  sdk: ^3.6.0
+
+dependencies:
+  authentication:
+    path: modules/authentication
+  core:
+    path: modules/core
+  home:
+    path: modules/home
+  bloc: ^9.0.0
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  flutter_localizations:
+    sdk: flutter
+  go_router: ^15.1.1
+  google_fonts: ^6.2.1
+  intl: ^0.20.2
+  freezed_annotation: ^3.0.0
+  json_annotation: ^4.9.0
+  retrofit: ^4.4.2
+
+dev_dependencies:
+  bloc_test: ^10.0.0
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.4
+  build_runner: ^2.4.15
+  freezed: ^3.0.6
+  json_serializable: ^6.9.5
+  very_good_analysis: ^8.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true

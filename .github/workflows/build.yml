@@ -1,15 +1,21 @@
-name: CI Build
+name: CI/CD PipelineMore actions
 
 on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main, develop ] 
+  push: {}
+  pull_request: {}
   workflow_dispatch:
 
+env:
+  DOCKER_IMAGE_NAME: dasi-app
+  DOCKER_REGISTRY: ghcr.io
+
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 13
+    strategy:
+      matrix:
+        service: [auth, inventory, order]
 
     steps:
       - name: Checkout Code
@@ -19,12 +25,66 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'  
+          java-version: '17'
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v3
+      - name: Setup Gradle Cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
-      - name: Run Gradle Build
-        run: ./gradlew build
+      - name: Grant execute permission for Gradle Wrapper
+        run: chmod +x ./gradlew
+        working-directory: ${{ matrix.service }}
+
+      - name: Build and test ${{ matrix.service }}
+        run: ./gradlew build --no-daemon --stacktrace --info
+        working-directory: ${{ matrix.service }}
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.service }}-test-results
+          path: ${{ matrix.service }}/build/test-results/**/*.xml
 
 
+  docker-build:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [auth, inventory, order]
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Normalize repository name to lowercase
+        run: echo "REPO_LOWERCASE=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.CR_PAT || secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker Image
+        run: |
+          docker build -t $DOCKER_REGISTRY/$REPO_LOWERCASE/${{ matrix.service }}-service:${{ github.sha }} ./${{ matrix.service }}
+
+      - name: Tag Docker Image as latest
+        run: |
+          docker tag $DOCKER_REGISTRY/$REPO_LOWERCASE/${{ matrix.service }}-service:${{ github.sha }} \
+                       $DOCKER_REGISTRY/$REPO_LOWERCASE/${{ matrix.service }}-service:latest
+
+      - name: Push Docker Images
+        run: |
+          docker push $DOCKER_REGISTRY/$REPO_LOWERCASE/${{ matrix.service }}-service:${{ github.sha }}
+          docker push $DOCKER_REGISTRY/$REPO_LOWERCASE/${{ matrix.service }}-service:latest

@@ -16,12 +16,12 @@ terraform {
 
 # Configure the PostgreSQL Provider
 provider "postgresql" {
-  host            = "127.0.0.1"
-  port            = 5432
-  username        = "postgres"
-  password        = ""
-  database        = "postgres"
-  sslmode         = "disable"
+  host     = "127.0.0.1"
+  port     = 5432
+  username = "postgres"
+  password = ""
+  database = "postgres"
+  sslmode  = "disable"
 }
 
 # Resource: Create a new PostgreSQL database for the application
@@ -32,19 +32,19 @@ resource "postgresql_database" "app_database" {
 
 # Resource: Create a new PostgreSQL user for the application
 resource "postgresql_role" "app_user" { # <--- THIS BLOCK MUST BE PRESENT!
-  name     = "dasi_user"
-  password = "pass" # For mockup
-  login    = true
+  name            = "dasi_user"
+  password        = "pass" # For mockup
+  login           = true
   create_database = false
 }
 
 # Output the database name and user for verification
 output "database_name" {
-  value = postgresql_database.app_database.name
+  value       = postgresql_database.app_database.name
   description = "The name of the database created by Terraform."
 }
 
 output "database_user" {
-  value = postgresql_role.app_user.name
+  value       = postgresql_role.app_user.name
   description = "The name of the database user created by Terraform."
 }
