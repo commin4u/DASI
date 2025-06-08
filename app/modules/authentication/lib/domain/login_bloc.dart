@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:authentication/data/token_storage_service.dart';
 import 'package:core/api_response_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -11,12 +12,16 @@ import 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
   LoginCubit({
-    required LoginService repository,
+    required LoginService authLoginService,
+    required TokenStorageService tokenStorageService,
   })
-      : _repository = repository,
+      : _authLoginService = authLoginService,
+        _tokenStorageService = tokenStorageService,
         super(const LoginState.formData(email: null, password: null));
 
-  final LoginService _repository;
+  final LoginService _authLoginService;
+
+  final TokenStorageService _tokenStorageService;
 
   void onPasswordChange(String password) {
     switch (state) {
@@ -50,11 +55,14 @@ class LoginCubit extends Cubit<LoginState> {
 
         final loginRequest = 'Basic ${base64Encode(utf8.encode('${currentState.email}:${currentState.password}'))}';
         debugPrint('Submitting login with request: $loginRequest');
-        final result = await _repository.submitLogin(loginRequest);
+        final result = await _authLoginService.submitLogin(loginRequest);
         debugPrint('Login result: $result');
         if (result.accessToken != null) {
           emit(LoginState.success());
-          accessToken = result.accessToken!;
+          await _tokenStorageService.saveToken(
+            accessToken: result.accessToken!,
+          );
+
         } else {
           emit(LoginState.error('Login failed'));
         }

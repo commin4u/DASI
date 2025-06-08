@@ -58,5 +58,3 @@ class ApiResponseInterceptor implements Interceptor {
     handler.next(response);
   }
 }
-
-var accessToken = '';

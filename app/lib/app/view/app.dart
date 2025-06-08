@@ -1,5 +1,6 @@
 import 'package:authentication/data/authorization_interceptor.dart';
 import 'package:authentication/data/login_service.dart';
+import 'package:authentication/data/token_storage_service.dart';
 import 'package:authentication/domain/login_bloc.dart';
 import 'package:authentication/presentation/authentication_screen.dart';
 import 'package:core/api_response_interceptor.dart';
@@ -13,6 +14,7 @@ import 'package:go_router/go_router.dart';
 import 'package:home/data/listing_repository.dart';
 import 'package:home/data/listing_service.dart';
 import 'package:home/domain/blocs/listing_cubit.dart';
+import 'package:home/domain/blocs/listing_details_cubit.dart';
 import 'package:home/presentation/create_listing_screen.dart';
 import 'package:home/presentation/create_order_screen.dart';
 import 'package:home/presentation/home_screen.dart';
@@ -22,7 +24,7 @@ class App extends StatelessWidget {
   App({super.key});
 
   final GoRouter _router = GoRouter(
-    initialLocation: _checkInitialLocation(),
+    initialLocation: '/',
     debugLogDiagnostics: true,
     routes: <RouteBase>[
       GoRoute(
@@ -51,7 +53,7 @@ class App extends StatelessWidget {
             path: 'listing/:id',
             builder: (BuildContext context, GoRouterState state) {
               final id = state.pathParameters['id']!;
-              return ListingDetailsScreen(id: id);
+              return ListingDetailsScreen(id: int.parse(id));
             },
           ),
           GoRoute(
@@ -69,46 +71,19 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final brightness = View.of(context).platformDispatcher.platformBrightness;
     final textTheme = createTextTheme(context, 'Belanosima', 'Belanosima');
     final theme = MaterialTheme(textTheme);
-
-    final dio = Dio(
-      BaseOptions(
-        baseUrl: 'http://10.0.2.2:8085',
-        connectTimeout: const Duration(milliseconds: 5000),
-        receiveTimeout: const Duration(milliseconds: 3000),
-      ),
-    )..interceptors.addAll(
-      <Interceptor>[
-        ApiResponseInterceptor(router: _router),
-        AuthorizationInterceptor(),
-      ],
-    );
-
+    final tokenStorageService = TokenStorageService();
+    final dio = Dio( BaseOptions( baseUrl: 'http://10.0.2.2:8085', connectTimeout: const Duration(milliseconds: 5000), receiveTimeout: const Duration(milliseconds: 3000) ) )
+      ..interceptors.addAll( <Interceptor>[ ApiResponseInterceptor(router: _router), AuthorizationInterceptor(tokenStorageService: tokenStorageService) ] );
+    final listingRepository = ListingRepositoryImpl( listingService: ListingService( dio ) );
+    final authLoginService = ApiLoginService( Dio( BaseOptions( baseUrl: 'http://10.0.2.2:9000' ) ) );
     return MultiBlocProvider(
       providers: [
-        BlocProvider<LoginCubit>(
-          create: (BuildContext context) => LoginCubit(
-            repository: ApiLoginService(
-              Dio(
-                BaseOptions(
-                  baseUrl: 'http://10.0.2.2:9000',
-                ),
-              ),
-            ),
-          ),
-        ),
-        BlocProvider<ListingCubit>(
-          create: (BuildContext context) => ListingCubit(
-            listingRepository: ListingRepositoryImpl(
-              listingService: ListingService(
-                dio,
-              ),
-            ),
-          ),
-        ),
+        BlocProvider<LoginCubit>( create: (BuildContext context) => LoginCubit( authLoginService: authLoginService, tokenStorageService: tokenStorageService) ),
+        BlocProvider<ListingCubit>( create: (BuildContext context) => ListingCubit( listingRepository: listingRepository ) ),
+        BlocProvider( create: (BuildContext context) => ListingDetailsCubit( listingRepository:listingRepository ) )
       ],
       child: MaterialApp.router(
         routerConfig: _router,
@@ -117,11 +92,5 @@ class App extends StatelessWidget {
         supportedLocales: AppLocalizations.supportedLocales,
       ),
     );
-  }
-
-  static String _checkInitialLocation() {
-    // Check if the user is authenticated, if not redirect to auth page
-    const isAuthenticated = true; // Replace with actual authentication check
-    return isAuthenticated ? '/' : '/auth';
   }
 }

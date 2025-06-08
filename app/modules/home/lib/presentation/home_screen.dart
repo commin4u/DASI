@@ -6,14 +6,24 @@ import 'package:home/domain/blocs/listing_state.dart';
 import 'package:home/presentation/widgets/listing_card.dart';
 import 'package:home/presentation/widgets/listings_horizontal_carousel.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<ListingCubit>().loadListings();
+  }
 
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.sizeOf(context).height;
-
-    context.read<ListingCubit>().loadListings();
 
     return Scaffold(
       appBar: AppBar(
@@ -40,7 +50,6 @@ class HomeScreen extends StatelessWidget {
       body: BlocListener(
         bloc: context.read<ListingCubit>(),
         listener: (BuildContext context, ListingState state) {
-          debugPrint('HomeScreen: ListingState changed: $state');
           if (state is ListingStateError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.message)),

@@ -43,6 +43,17 @@ class RentalTier extends EnumClass {
 
   static BuiltSet<RentalTier> get values => _$listingTypeValues;
   static RentalTier valueOf(String name) => _$listingTypeValueOf(name);
+
+  @override
+  String get name {
+    switch (this) {
+      case RentalTier.regular:
+        return 'Regular';
+      case RentalTier.old:
+        return 'Old';
+    }
+    return super.name;
+  }
 }
 
 class Platform extends EnumClass {
@@ -74,4 +85,25 @@ class Platform extends EnumClass {
 
   static BuiltSet<Platform> get values => _$platformValues;
   static Platform valueOf(String name) => _$platformValueOf(name);
+
+  @override
+  String get name {
+    switch (this) {
+      case Platform.ps3:
+        return 'PlayStation 3';
+      case Platform.ps4:
+        return 'PlayStation 4';
+      case Platform.ps5:
+        return 'PlayStation 5';
+      case Platform.pc:
+        return 'PC';
+      case Platform.xbox360:
+        return 'Xbox 360';
+      case Platform.xboxOne:
+        return 'Xbox One';
+      case Platform.xboxSeriesX:
+        return 'Xbox Series X';
+    }
+    return super.name;
+  }
 }

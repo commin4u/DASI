@@ -1,24 +1,27 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:home/domain/blocs/listing_details_cubit.dart';
 import 'package:home/domain/blocs/listing_details_state.dart';
 
 class ListingDetailsScreen extends StatelessWidget {
-  final String id;
+  final int id;
 
   const ListingDetailsScreen({super.key, required this.id});
 
   @override
   Widget build(BuildContext context) {
+
+    if (context.read<ListingDetailsCubit>().state is ListingDetailsStateInitial) {
+      context.read<ListingDetailsCubit>().get(id);
+    }
+
     return Scaffold(
       appBar: AppBar(title: Text('Listing Details')),
       body: Center(
         child: Column(
           children: [
-            Image.network(
-              "https://www.cdmi.in/courses@2x/2D3D-Game-Design.webp",
-            ),
-            const SizedBox(height: 16.0),
             BlocBuilder(
               bloc: context.read<ListingDetailsCubit>(),
               builder: (BuildContext context, ListingDetailsState state) {
@@ -30,20 +33,44 @@ class ListingDetailsScreen extends StatelessWidget {
                   case ListingDetailsStateLoaded state:
                     final listing = state.data;
                     return Column(
-                      children: [
-                        Text(
-                          listing.title,
-                          style: Theme.of(context).textTheme.headlineLarge,
-                        ),
-                        const SizedBox(height: 8.0),
-                        Text(listing.description ?? 'No description available'),
-                      ],
+                        children: [
+                          if (listing.imageBase64 != null)
+                            Image.memory(
+                              base64Decode(listing.imageBase64!),
+                            ),
+                          const SizedBox(height: 16.0),
+                          Text(
+                            listing.title,
+                            style: Theme.of(context).textTheme.headlineLarge,
+                          ),
+                          const SizedBox(height: 8.0),
+                          Text(listing.rentalTier.name),
+                          if (listing.platform?.name != null ) ...[
+                            const SizedBox(height: 8.0),
+                            Text(listing.platform!.name),
+                          ],
+                          const SizedBox(height: 8.0),
+                          if (listing.pricePerAdditionalDay != null) ...[
+                            const SizedBox(height: 8.0),
+                            Text(
+                              'Price per additional day: ${listing.pricePerAdditionalDay}',
+                              style: Theme.of(context).textTheme.headlineMedium,
+                            ),
+                          ],
+                          if (listing.pricePerRent != null) ...[
+                            const SizedBox(height: 8.0),
+                            Text(
+                              'Price per additional day: ${listing.pricePerRent}',
+                              style: Theme.of(context).textTheme.headlineMedium,
+                            ),
+                          ]
+                        ],
                     );
+
                 }
                 return const SizedBox.shrink();
               },
             ),
-            Text('Details for listing ID: $id'),
           ],
         ),
       ),
