@@ -17,8 +17,8 @@ abstract class Listing implements Built<Listing, ListingBuilder> {
 
   String get title;
   String? get description;
-  String? get imageUrl;
-  String? get id;
+  String? get imageBase64;
+  int? get id;
 
   int? get pricePerRent;
   int? get baseRentDays;
@@ -49,12 +49,25 @@ class Platform extends EnumClass {
 
   static Serializer<Platform> get serializer => _$platformSerializer;
 
+  @BuiltValueEnumConst(wireName: 'PS3')
   static const Platform ps3 = _$ps3;
+
+  @BuiltValueEnumConst(wireName: 'PS4')
   static const Platform ps4 = _$ps4;
+
+  @BuiltValueEnumConst(wireName: 'PS5')
   static const Platform ps5 = _$ps5;
+
+  @BuiltValueEnumConst(wireName: 'PC')
   static const Platform pc = _$pc;
+
+  @BuiltValueEnumConst(wireName: 'XBOX360')
   static const Platform xbox360 = _$xbox360;
+
+  @BuiltValueEnumConst(wireName: 'XBOXONE')
   static const Platform xboxOne = _$xboxOne;
+
+  @BuiltValueEnumConst(wireName: 'XBOXSERIESX')
   static const Platform xboxSeriesX = _$xboxSeriesX;
 
   const Platform._(super.name);

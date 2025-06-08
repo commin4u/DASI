@@ -53,6 +53,7 @@ class ListingsHorizontalCarousel extends StatelessWidget {
             children: listings.map((listing) => ListingCard(
               listing: listing,
               minHeight: height / 3.5,
+              maxHeight: height / 3,
             )).toList(),
           ),
         ),

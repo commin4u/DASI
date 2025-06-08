@@ -1,3 +1,4 @@
+import 'package:authentication/data/authorization_interceptor.dart';
 import 'package:authentication/data/login_service.dart';
 import 'package:authentication/domain/login_bloc.dart';
 import 'package:authentication/presentation/authentication_screen.dart';
@@ -79,11 +80,10 @@ class App extends StatelessWidget {
         connectTimeout: const Duration(milliseconds: 5000),
         receiveTimeout: const Duration(milliseconds: 3000),
       ),
-    );
-
-    dio.interceptors.addAll(
+    )..interceptors.addAll(
       <Interceptor>[
         ApiResponseInterceptor(router: _router),
+        AuthorizationInterceptor(),
       ],
     );
 
@@ -91,7 +91,13 @@ class App extends StatelessWidget {
       providers: [
         BlocProvider<LoginCubit>(
           create: (BuildContext context) => LoginCubit(
-            repository: MockLoginService(),
+            repository: ApiLoginService(
+              Dio(
+                BaseOptions(
+                  baseUrl: 'http://10.0.2.2:9000',
+                ),
+              ),
+            ),
           ),
         ),
         BlocProvider<ListingCubit>(

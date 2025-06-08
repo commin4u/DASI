@@ -17,7 +17,7 @@ class ApiResponseInterceptor implements Interceptor {
 
     if (err.response?.statusCode == 403) {
       debugPrint('Authentication error: ${err.response?.data}');
-      router.pushNamed('auth');
+      router.pushReplacementNamed('auth');
       handler.reject(
         DioException(
           requestOptions: err.requestOptions,
@@ -58,3 +58,5 @@ class ApiResponseInterceptor implements Interceptor {
     handler.next(response);
   }
 }
+
+var accessToken = '';

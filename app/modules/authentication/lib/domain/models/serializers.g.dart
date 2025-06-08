@@ -7,6 +7,9 @@ part of 'serializers.dart';
 // **************************************************************************
 
 Serializers _$serializers =
-    (Serializers().toBuilder()..add(LoginRequest.serializer)).build();
+    (Serializers().toBuilder()
+          ..add(LoginData.serializer)
+          ..add(LoginRequest.serializer))
+        .build();
 
 // ignore_for_file: deprecated_member_use_from_same_package,type=lint

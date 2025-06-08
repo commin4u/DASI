@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:home/domain/model/listing.dart';
@@ -6,16 +8,18 @@ class ListingCard extends StatelessWidget {
   final Listing listing;
 
   final double minHeight;
+  final double maxHeight;
 
   const ListingCard({
     super.key,
     required this.listing,
     required this.minHeight,
+    required this.maxHeight,
   });
 
   @override
   Widget build(BuildContext context) {
-    final imageUrl = listing.imageUrl;
+    final imageUrl = listing.imageBase64;
     final description = listing.description;
     return IntrinsicHeight(
       child: GestureDetector(
@@ -23,7 +27,7 @@ class ListingCard extends StatelessWidget {
           if (listing.id == null) {
             return;
           }
-          context.goNamed('listingDetails', pathParameters: {'id': listing.id!});
+          context.goNamed('listingDetails', pathParameters: {'id': listing.id.toString()});
         },
         child: Card(
           clipBehavior: Clip.antiAlias,
@@ -33,6 +37,7 @@ class ListingCard extends StatelessWidget {
               ConstrainedBox(
                 constraints: BoxConstraints(
                   minHeight: minHeight,
+                  maxHeight: maxHeight,
                 ),
                 child: _imageWidget(imageUrl),
               ),
@@ -74,8 +79,8 @@ class ListingCard extends StatelessWidget {
     );
   }
 
-  Widget _imageWidget(String? imageUrl) {
-    if (imageUrl == null || imageUrl.isEmpty) {
+  Widget _imageWidget(String? imageBase64) {
+    if (imageBase64 == null || imageBase64.isEmpty) {
       return Image.network(
         'https://cdn2.unrealengine.com/fnbr-34-00-c6s2-1920x1080-2d1d03472e03.jpg',
         fit: BoxFit.cover,
@@ -83,8 +88,9 @@ class ListingCard extends StatelessWidget {
     }
     return Material(
       borderRadius: BorderRadius.only(bottomLeft: Radius.circular(12.0), bottomRight: Radius.circular(12.0)),
-      child: Image.network(
-        imageUrl,
+      child: Image.memory(
+        base64Decode(imageBase64),
+        // should take full width of the card
         fit: BoxFit.cover,
       ),
     );
