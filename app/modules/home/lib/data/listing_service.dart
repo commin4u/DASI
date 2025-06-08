@@ -11,4 +11,7 @@ abstract class ListingService {
 
   @GET('/all')
   Future<List<Listing>> fetchListings();
+
+  @GET('/{videoGameId}')
+  Future<Listing> fetchListingDetails(@Path('videoGameId') int videoGameId);
 }

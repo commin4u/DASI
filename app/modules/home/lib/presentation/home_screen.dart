@@ -86,7 +86,6 @@ class HomeScreen extends StatelessWidget {
             child: SizedBox(height: 16),
           ),
 
-          // Grid
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             sliver: BlocBuilder(

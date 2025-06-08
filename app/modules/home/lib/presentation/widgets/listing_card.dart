@@ -20,7 +20,10 @@ class ListingCard extends StatelessWidget {
     return IntrinsicHeight(
       child: GestureDetector(
         onTap: () {
-          context.goNamed('listingDetails');
+          if (listing.id == null) {
+            return;
+          }
+          context.goNamed('listingDetails', pathParameters: {'id': listing.id!});
         },
         child: Card(
           clipBehavior: Clip.antiAlias,

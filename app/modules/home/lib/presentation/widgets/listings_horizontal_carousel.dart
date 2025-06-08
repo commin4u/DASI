@@ -41,18 +41,6 @@ class ListingsHorizontalCarousel extends StatelessWidget {
             ],
           ),
         ),
-        // SingleChildScrollView(
-        //   scrollDirection: Axis.horizontal,
-        //   child: IntrinsicHeight(
-        //     child: Row(
-        //         children: [
-        //           SizedBox( width: 16.0 ),
-        //           ...listings.map((listing) => ListingCard(listing: listing)),
-        //           SizedBox( width: 16.0 ),
-        //         ],
-        //     ),
-        //   ),
-        // ),
 
         ConstrainedBox(
           constraints: BoxConstraints(
@@ -61,6 +49,7 @@ class ListingsHorizontalCarousel extends StatelessWidget {
           child: CarouselView.weighted(
             flexWeights: [1, 7, 1],
             itemSnapping: true,
+            enableSplash: false,
             children: listings.map((listing) => ListingCard(
               listing: listing,
               minHeight: height / 3.5,

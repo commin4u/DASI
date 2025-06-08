@@ -5,7 +5,7 @@ abstract class ListingRepository {
 
   Future<List<Listing>> fetchListings();
 
-  Future<Listing> fetchListingDetails(String listingId);
+  Future<Listing> fetchListingDetails(int listingId);
 
   Future<void> saveListing(Listing listing);
 
@@ -27,10 +27,9 @@ class ListingRepositoryImpl implements ListingRepository {
   }
 
   @override
-  Future<Listing> fetchListingDetails(String listingId) async {
-    return Future.error(
-      'Method not implemented. Please implement fetchListingDetails in ListingRepositoryImpl.',
-    );
+  Future<Listing> fetchListingDetails(int listingId) async {
+    final result = await _listingService.fetchListingDetails(listingId);
+    return result;
   }
 
   @override
