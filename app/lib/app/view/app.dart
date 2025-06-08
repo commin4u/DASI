@@ -18,12 +18,14 @@ import 'package:home/presentation/home_screen.dart';
 import 'package:home/presentation/listing_details_screen.dart';
 
 class App extends StatelessWidget {
-  const App({super.key});
+  App({super.key});
 
-  GoRouter get _router => GoRouter(
+  final GoRouter _router = GoRouter(
     initialLocation: _checkInitialLocation(),
+    debugLogDiagnostics: true,
     routes: <RouteBase>[
       GoRoute(
+        name: 'auth',
         path: '/auth',
         builder: (BuildContext context, GoRouterState state) {
           return AuthenticationScreen();
@@ -73,7 +75,7 @@ class App extends StatelessWidget {
 
     final dio = Dio(
       BaseOptions(
-        baseUrl: 'http://10.0.2.2:8082',
+        baseUrl: 'http://10.0.2.2:8085',
         connectTimeout: const Duration(milliseconds: 5000),
         receiveTimeout: const Duration(milliseconds: 3000),
       ),
@@ -81,11 +83,7 @@ class App extends StatelessWidget {
 
     dio.interceptors.addAll(
       <Interceptor>[
-        LogInterceptor(
-          responseBody: true,
-          logPrint: (o) => debugPrint(o.toString()),
-        ),
-        ApiResponseInterceptor(),
+        ApiResponseInterceptor(router: _router),
       ],
     );
 
@@ -100,8 +98,7 @@ class App extends StatelessWidget {
           create: (BuildContext context) => ListingCubit(
             listingRepository: ListingRepositoryImpl(
               listingService: ListingService(
-                dio
-                ,
+                dio,
               ),
             ),
           ),
