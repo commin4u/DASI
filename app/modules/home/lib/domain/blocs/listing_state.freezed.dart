@@ -110,14 +110,21 @@ String toString() {
 
 
 class ListingStateLoaded implements ListingState {
-   ListingStateLoaded(final  List<Listing> listings): _listings = listings;
+   ListingStateLoaded({required final  List<Listing> carouselListings, required final  List<Listing> fullListListings}): _carouselListings = carouselListings,_fullListListings = fullListListings;
   
 
- final  List<Listing> _listings;
- List<Listing> get listings {
-  if (_listings is EqualUnmodifiableListView) return _listings;
+ final  List<Listing> _carouselListings;
+ List<Listing> get carouselListings {
+  if (_carouselListings is EqualUnmodifiableListView) return _carouselListings;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_listings);
+  return EqualUnmodifiableListView(_carouselListings);
+}
+
+ final  List<Listing> _fullListListings;
+ List<Listing> get fullListListings {
+  if (_fullListListings is EqualUnmodifiableListView) return _fullListListings;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_fullListListings);
 }
 
 
@@ -131,16 +138,16 @@ $ListingStateLoadedCopyWith<ListingStateLoaded> get copyWith => _$ListingStateLo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ListingStateLoaded&&const DeepCollectionEquality().equals(other._listings, _listings));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ListingStateLoaded&&const DeepCollectionEquality().equals(other._carouselListings, _carouselListings)&&const DeepCollectionEquality().equals(other._fullListListings, _fullListListings));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_listings));
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_carouselListings),const DeepCollectionEquality().hash(_fullListListings));
 
 @override
 String toString() {
-  return 'ListingState.loaded(listings: $listings)';
+  return 'ListingState.loaded(carouselListings: $carouselListings, fullListListings: $fullListListings)';
 }
 
 
@@ -151,7 +158,7 @@ abstract mixin class $ListingStateLoadedCopyWith<$Res> implements $ListingStateC
   factory $ListingStateLoadedCopyWith(ListingStateLoaded value, $Res Function(ListingStateLoaded) _then) = _$ListingStateLoadedCopyWithImpl;
 @useResult
 $Res call({
- List<Listing> listings
+ List<Listing> carouselListings, List<Listing> fullListListings
 });
 
 
@@ -168,9 +175,10 @@ class _$ListingStateLoadedCopyWithImpl<$Res>
 
 /// Create a copy of ListingState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? listings = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? carouselListings = null,Object? fullListListings = null,}) {
   return _then(ListingStateLoaded(
-null == listings ? _self._listings : listings // ignore: cast_nullable_to_non_nullable
+carouselListings: null == carouselListings ? _self._carouselListings : carouselListings // ignore: cast_nullable_to_non_nullable
+as List<Listing>,fullListListings: null == fullListListings ? _self._fullListListings : fullListListings // ignore: cast_nullable_to_non_nullable
 as List<Listing>,
   ));
 }
