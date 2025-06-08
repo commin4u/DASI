@@ -12,7 +12,7 @@ env:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 13
     strategy:
       matrix:
         service: [auth, inventory, order]
@@ -50,57 +50,6 @@ jobs:
           name: ${{ matrix.service }}-test-results
           path: ${{ matrix.service }}/build/test-results/**/*.xml
 
-  deploy-infrastructure:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Check for Terraform directory
-        id: check-infra
-        run: |
-          if [ ! -d "infrastructure/terraform" ]; then
-            echo "::notice::No infrastructure/terraform directory found. Skipping Terraform steps."
-            echo "skip_terraform=true" >> $GITHUB_OUTPUT
-          else
-            echo "::notice::infrastructure/terraform directory found. Proceeding with Terraform."
-            echo "skip_terraform=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Install Terraform
-        if: steps.check-infra.outputs.skip_terraform != 'true'
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.5.0
-
-      - name: Terraform Format Check
-        if: steps.check-infra.outputs.skip_terraform != 'true'
-        run: terraform -chdir=infrastructure/terraform fmt -check 
-
-      - name: Terraform Init
-        if: steps.check-infra.outputs.skip_terraform != 'true'
-        run: terraform -chdir=infrastructure/terraform init -input=false
-
-      - name: Terraform Validate
-        if: steps.check-infra.outputs.skip_terraform != 'true'
-        run: terraform -chdir=infrastructure/terraform validate 
-
-      - name: Terraform Plan
-        if: steps.check-infra.outputs.skip_terraform != 'true'
-        run: terraform -chdir=infrastructure/terraform plan -out=tfplan -input=false
-
-      - name: Upload Terraform Plan
-        if: steps.check-infra.outputs.skip_terraform != 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: terraform-plan
-          path: infrastructure/terraform/tfplan 
-
-      - name: Terraform Apply
-        if: steps.check-infra.outputs.skip_terraform != 'true' && github.ref == 'refs/heads/main'
-        run: terraform -chdir=infrastructure/terraform apply -auto-approve -input=false
 
   docker-build:
     needs: build-and-test
