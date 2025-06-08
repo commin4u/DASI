@@ -40,7 +40,7 @@ jobs:
         working-directory: ${{ matrix.service }}
 
       - name: Build and test ${{ matrix.service }}
-        run: ./gradlew build --no-daemon
+        run: ./gradlew build --no-daemon --stacktrace --info
         working-directory: ${{ matrix.service }}
 
       - name: Upload Test Results
@@ -58,14 +58,14 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Check for infra directory
+      - name: Check for Terraform directory
         id: check-infra
         run: |
-          if [ ! -d "infra" ]; then
-            echo "::notice::No infra/ directory found. Skipping Terraform steps."
+          if [ ! -d "infrastructure/terraform" ]; then
+            echo "::notice::No infrastructure/terraform directory found. Skipping Terraform steps."
             echo "skip_terraform=true" >> $GITHUB_OUTPUT
           else
-            echo "::notice::infra/ directory found. Proceeding with Terraform."
+            echo "::notice::infrastructure/terraform directory found. Proceeding with Terraform."
             echo "skip_terraform=false" >> $GITHUB_OUTPUT
           fi
 
@@ -77,30 +77,30 @@ jobs:
 
       - name: Terraform Format Check
         if: steps.check-infra.outputs.skip_terraform != 'true'
-        run: terraform -chdir=infra fmt -check
+        run: terraform -chdir=infrastructure/terraform fmt -check 
 
       - name: Terraform Init
         if: steps.check-infra.outputs.skip_terraform != 'true'
-        run: terraform -chdir=infra init -input=false
+        run: terraform -chdir=infrastructure/terraform init -input=false
 
       - name: Terraform Validate
         if: steps.check-infra.outputs.skip_terraform != 'true'
-        run: terraform -chdir=infra validate
+        run: terraform -chdir=infrastructure/terraform validate 
 
       - name: Terraform Plan
         if: steps.check-infra.outputs.skip_terraform != 'true'
-        run: terraform -chdir=infra plan -out=tfplan -input=false
+        run: terraform -chdir=infrastructure/terraform plan -out=tfplan -input=false
 
       - name: Upload Terraform Plan
         if: steps.check-infra.outputs.skip_terraform != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: terraform-plan
-          path: infra/tfplan
+          path: infrastructure/terraform/tfplan 
 
       - name: Terraform Apply
         if: steps.check-infra.outputs.skip_terraform != 'true' && github.ref == 'refs/heads/main'
-        run: terraform -chdir=infra apply -auto-approve -input=false
+        run: terraform -chdir=infrastructure/terraform apply -auto-approve -input=false
 
   docker-build:
     needs: build-and-test
@@ -133,7 +133,7 @@ jobs:
       - name: Tag Docker Image as latest
         run: |
           docker tag $DOCKER_REGISTRY/$REPO_LOWERCASE/${{ matrix.service }}-service:${{ github.sha }} \
-                     $DOCKER_REGISTRY/$REPO_LOWERCASE/${{ matrix.service }}-service:latest
+                       $DOCKER_REGISTRY/$REPO_LOWERCASE/${{ matrix.service }}-service:latest
 
       - name: Push Docker Images
         run: |
