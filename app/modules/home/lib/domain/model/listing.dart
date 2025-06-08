@@ -18,7 +18,7 @@ abstract class Listing implements Built<Listing, ListingBuilder> {
   String get title;
   String? get description;
   String? get imageUrl;
-  String get id;
+  String? get id;
 
   int? get pricePerRent;
   int? get baseRentDays;
@@ -27,13 +27,17 @@ abstract class Listing implements Built<Listing, ListingBuilder> {
   @BuiltValueField(wireName: 'videoGameRentalTier')
   RentalTier get rentalTier;
 
-  Platform get platform;
+  Platform? get platform;
 }
 
 class RentalTier extends EnumClass {
-  static const RentalTier game = _$game;
-  static const RentalTier accessory = _$accessory;
-  static const RentalTier console = _$console;
+
+  static Serializer<RentalTier> get serializer => _$rentalTierSerializer;
+
+  @BuiltValueEnumConst(wireName: 'REGULAR')
+  static const RentalTier regular = _$regular;
+  @BuiltValueEnumConst(wireName: 'OLD')
+  static const RentalTier old = _$old;
 
   const RentalTier._(super.name);
 
@@ -42,6 +46,9 @@ class RentalTier extends EnumClass {
 }
 
 class Platform extends EnumClass {
+
+  static Serializer<Platform> get serializer => _$platformSerializer;
+
   static const Platform ps3 = _$ps3;
   static const Platform ps4 = _$ps4;
   static const Platform ps5 = _$ps5;

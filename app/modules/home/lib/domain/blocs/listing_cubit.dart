@@ -20,19 +20,10 @@ class ListingCubit extends Cubit<ListingState> {
       'https://cdn.media.amplience.net/i/frasersdev/eldenring-nightreign-2x1?fmt=auto&upscale=false&w=991&h=496&sm=c&\$h-ttl\$',
       'https://fastly.picsum.photos/id/933/200/300.jpg?hmac=8zdipGWKGkHz8wyA9J63P3fzghuUL9wqV5Y34b8mLTI',
     ];
-    final listings =
-    [0, 1, 2, 3, 4].map((element) {
-      final b =
-      ListingBuilder()
-        ..description = 'Description of Game $element'
-        ..id = '$element'
-        ..rentalTier = RentalTier.accessory
-        ..platform = Platform.xbox360
-        ..imageUrl = images[element]
-        ..title = 'Game $element';
-      return b.build();
-    }).toList();
     final data = await _listingRepository.fetchListings();
-    emit(ListingState.loaded(data));
+    emit(ListingState.loaded(
+      carouselListings: data.take(5).toList(),
+      fullListListings: data,
+    ));
   }
 }

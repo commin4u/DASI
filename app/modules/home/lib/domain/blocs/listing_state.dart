@@ -9,7 +9,10 @@ abstract class ListingState with _$ListingState {
 
   factory ListingState.loading() = ListingStateLoading;
 
-  factory ListingState.loaded(List<Listing> listings) = ListingStateLoaded;
+  factory ListingState.loaded({
+    required List<Listing> carouselListings,
+    required List<Listing> fullListListings,
+  }) = ListingStateLoaded;
 
   factory ListingState.error(String message) = ListingStateError;
 }

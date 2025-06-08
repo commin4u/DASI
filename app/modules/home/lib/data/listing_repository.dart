@@ -1,12 +1,11 @@
 import 'package:home/data/listing_service.dart';
-import 'package:home/domain/model/data_result.dart';
 import 'package:home/domain/model/listing.dart';
 
 abstract class ListingRepository {
 
   Future<List<Listing>> fetchListings();
 
-  Future<Listing> fetchListingDetails(String listingId);
+  Future<Listing> fetchListingDetails(int listingId);
 
   Future<void> saveListing(Listing listing);
 
@@ -24,17 +23,13 @@ class ListingRepositoryImpl implements ListingRepository {
   @override
   Future<List<Listing>> fetchListings() async {
     final result = await _listingService.fetchListings();
-    final data = result.data?.expand((i) => i!).toList();
-    return data ?? Future.error(
-      'Failed to fetch listings: ${result.error ?? 'Unknown error'}',
-    );
+    return result;
   }
 
   @override
-  Future<Listing> fetchListingDetails(String listingId) async {
-    return Future.error(
-      'Method not implemented. Please implement fetchListingDetails in ListingRepositoryImpl.',
-    );
+  Future<Listing> fetchListingDetails(int listingId) async {
+    final result = await _listingService.fetchListingDetails(listingId);
+    return result;
   }
 
   @override
