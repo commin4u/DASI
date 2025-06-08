@@ -3,8 +3,14 @@ package com.uni.inventory.api.dto.response;
 import lombok.Builder;
 
 @Builder
-public record VideoGameResponseDto(String title,
+public record VideoGameResponseDto(Long id,
+                                   Long addedByUserId,
+                                   String title,
                                    String videoGameRentalTier,
                                    Integer pricePerRent,
                                    Integer baseRentDays,
-                                   Integer pricePerAdditionalRentDay) implements ResponseDto {}
+                                   Integer pricePerAdditionalRentDay,
+                                   String platform,
+                                   String contentType,
+                                   String imageBase64) implements ResponseDto {
+}
