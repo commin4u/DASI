@@ -2,8 +2,9 @@ package com.uni.auth;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import com.uni.server.AuthApplication;
 
-@SpringBootTest
+@SpringBootTest(classes = AuthApplication.class)
 class AuthApplicationTests {
 
 	@Test
