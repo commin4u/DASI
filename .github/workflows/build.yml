@@ -12,15 +12,13 @@ env:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [auth, inventory, order]
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
-      - name: Clean Gradle Cache
-        run: |
-          rm -rf ~/.gradle/caches
-          rm -rf ~/.gradle/wrapper
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -28,30 +26,20 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Cache Gradle packages
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v3
-
-      - name: Make Gradle Wrapper Executable
+      - name: Grant execute permission for Gradle Wrapper
         run: chmod +x ./gradlew
+        working-directory: ${{ matrix.service }}
 
-        working-directory: inventory
+      - name: Build and test ${{ matrix.service }}
+        run: ./gradlew build
+        working-directory: ${{ matrix.service }}
 
       - name: Upload Test Results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
-          path: inventory/build/test-results/**/*.xml
+          name: ${{ matrix.service }}-test-results
+          path: ${{ matrix.service }}/build/test-results/**/*.xml
 
   deploy-infrastructure:
     needs: build-and-test
@@ -108,6 +96,9 @@ jobs:
   docker-build:
     needs: build-and-test
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [auth, inventory, order]
     permissions:
       packages: write
       contents: read
@@ -127,14 +118,15 @@ jobs:
           password: ${{ secrets.CR_PAT || secrets.GITHUB_TOKEN }}
 
       - name: Build Docker Image
-        run: docker build -t $DOCKER_REGISTRY/$REPO_LOWERCASE/$DOCKER_IMAGE_NAME:${{ github.sha }} inventory/
+        run: |
+          docker build -t $DOCKER_REGISTRY/$REPO_LOWERCASE/${{ matrix.service }}-service:${{ github.sha }} ./${{ matrix.service }}
 
       - name: Tag Docker Image as latest
         run: |
-          docker tag $DOCKER_REGISTRY/$REPO_LOWERCASE/$DOCKER_IMAGE_NAME:${{ github.sha }} \
-                     $DOCKER_REGISTRY/$REPO_LOWERCASE/$DOCKER_IMAGE_NAME:latest
+          docker tag $DOCKER_REGISTRY/$REPO_LOWERCASE/${{ matrix.service }}-service:${{ github.sha }} \
+                     $DOCKER_REGISTRY/$REPO_LOWERCASE/${{ matrix.service }}-service:latest
 
       - name: Push Docker Images
         run: |
-          docker push $DOCKER_REGISTRY/$REPO_LOWERCASE/$DOCKER_IMAGE_NAME:${{ github.sha }}
-          docker push $DOCKER_REGISTRY/$REPO_LOWERCASE/$DOCKER_IMAGE_NAME:latest
+          docker push $DOCKER_REGISTRY/$REPO_LOWERCASE/${{ matrix.service }}-service:${{ github.sha }}
+          docker push $DOCKER_REGISTRY/$REPO_LOWERCASE/${{ matrix.service }}-service:latest
