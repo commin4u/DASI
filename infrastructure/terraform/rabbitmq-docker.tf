@@ -7,7 +7,7 @@ provider "docker" {}
 # Pull the official RabbitMQ Docker image
 resource "docker_image" "rabbitmq_image" {
   name         = "rabbitmq:3-management" # Uses 3-management for the web UI
-  keep_locally = true # Keep the image on the host even if resource is destroyed by 'terraform destroy'
+  keep_locally = true                    # Keep the image on the host even if resource is destroyed by 'terraform destroy'
 }
 
 # Define a Docker volume for persistent RabbitMQ data
@@ -20,7 +20,7 @@ resource "docker_volume" "rabbitmq_data" {
 resource "docker_container" "rabbitmq_server" {
   name    = "dasi-rabbitmq-server"
   image   = docker_image.rabbitmq_image.name # Use the image defined above
-  restart = "always" # Ensure it restarts with Docker daemon
+  restart = "always"                         # Ensure it restarts with Docker daemon
 
   # Expose RabbitMQ ports from the container to your host machine
   ports {
