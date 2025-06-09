@@ -59,6 +59,10 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         child: CustomScrollView(
           slivers: [
+            SliverToBoxAdapter(
+              child: SizedBox(height: 32.0),
+
+            ),
             // Carousel
             SliverToBoxAdapter(
               child: BlocBuilder(

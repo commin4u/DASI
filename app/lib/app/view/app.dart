@@ -13,6 +13,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:home/data/listing_repository.dart';
 import 'package:home/data/listing_service.dart';
+import 'package:home/data/order_service.dart';
+import 'package:home/domain/blocs/create_order_cubit.dart';
 import 'package:home/domain/blocs/listing_cubit.dart';
 import 'package:home/domain/blocs/listing_details_cubit.dart';
 import 'package:home/presentation/create_listing_screen.dart';
@@ -79,11 +81,15 @@ class App extends StatelessWidget {
       ..interceptors.addAll( <Interceptor>[ ApiResponseInterceptor(router: _router), AuthorizationInterceptor(tokenStorageService: tokenStorageService) ] );
     final listingRepository = ListingRepositoryImpl( listingService: ListingService( dio ) );
     final authLoginService = ApiLoginService( Dio( BaseOptions( baseUrl: 'http://10.0.2.2:9000' ) ) );
+    final orderDio = Dio( BaseOptions( baseUrl: 'http://10.0.2.2:8089', contentType: 'application/json' ) )
+      ..interceptors.addAll( <Interceptor>[ ApiResponseInterceptor(router: _router), AuthorizationInterceptor(tokenStorageService: tokenStorageService) ] );
+    final orderService = OrderService( orderDio) ;
     return MultiBlocProvider(
       providers: [
         BlocProvider<LoginCubit>( create: (BuildContext context) => LoginCubit( authLoginService: authLoginService, tokenStorageService: tokenStorageService) ),
         BlocProvider<ListingCubit>( create: (BuildContext context) => ListingCubit( listingRepository: listingRepository ) ),
-        BlocProvider( create: (BuildContext context) => ListingDetailsCubit( listingRepository:listingRepository ) )
+        BlocProvider<ListingDetailsCubit>( create: (BuildContext context) => ListingDetailsCubit( listingRepository:listingRepository ) ),
+        BlocProvider<CreateOrderCubit>( create: (BuildContext context) => CreateOrderCubit( orderService: orderService ) ),
       ],
       child: MaterialApp.router(
         routerConfig: _router,

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
@@ -105,5 +107,21 @@ class Platform extends EnumClass {
         return 'Xbox Series X';
     }
     return super.name;
+  }
+
+  Color get chipColor {
+    switch (this) {
+      case Platform.ps3:
+      case Platform.ps4:
+      case Platform.ps5:
+        return const Color(0xFF0072C6); // PlayStation Blue
+      case Platform.pc:
+        return const Color(0xFF841617); // Amd Red
+      case Platform.xbox360:
+      case Platform.xboxOne:
+      case Platform.xboxSeriesX:
+        return const Color(0xFF107C10); // Xbox Green
+    }
+    return const Color(0xFF808080); // Grey
   }
 }

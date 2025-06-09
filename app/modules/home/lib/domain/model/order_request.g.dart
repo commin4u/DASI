@@ -21,11 +21,6 @@ class _$OrderRequestSerializer implements StructuredSerializer<OrderRequest> {
     FullType specifiedType = FullType.unspecified,
   }) {
     final result = <Object?>[
-      'listingId',
-      serializers.serialize(
-        object.listingId,
-        specifiedType: const FullType(String),
-      ),
       'startDate',
       serializers.serialize(
         object.startDate,
@@ -55,14 +50,6 @@ class _$OrderRequestSerializer implements StructuredSerializer<OrderRequest> {
       iterator.moveNext();
       final Object? value = iterator.current;
       switch (key) {
-        case 'listingId':
-          result.listingId =
-              serializers.deserialize(
-                    value,
-                    specifiedType: const FullType(String),
-                  )!
-                  as String;
-          break;
         case 'startDate':
           result.startDate =
               serializers.deserialize(
@@ -88,8 +75,6 @@ class _$OrderRequestSerializer implements StructuredSerializer<OrderRequest> {
 
 class _$OrderRequest extends OrderRequest {
   @override
-  final String listingId;
-  @override
   final String startDate;
   @override
   final int numberOfDays;
@@ -97,11 +82,8 @@ class _$OrderRequest extends OrderRequest {
   factory _$OrderRequest([void Function(OrderRequestBuilder)? updates]) =>
       (OrderRequestBuilder()..update(updates))._build();
 
-  _$OrderRequest._({
-    required this.listingId,
-    required this.startDate,
-    required this.numberOfDays,
-  }) : super._();
+  _$OrderRequest._({required this.startDate, required this.numberOfDays})
+    : super._();
   @override
   OrderRequest rebuild(void Function(OrderRequestBuilder) updates) =>
       (toBuilder()..update(updates)).build();
@@ -113,7 +95,6 @@ class _$OrderRequest extends OrderRequest {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is OrderRequest &&
-        listingId == other.listingId &&
         startDate == other.startDate &&
         numberOfDays == other.numberOfDays;
   }
@@ -121,7 +102,6 @@ class _$OrderRequest extends OrderRequest {
   @override
   int get hashCode {
     var _$hash = 0;
-    _$hash = $jc(_$hash, listingId.hashCode);
     _$hash = $jc(_$hash, startDate.hashCode);
     _$hash = $jc(_$hash, numberOfDays.hashCode);
     _$hash = $jf(_$hash);
@@ -131,7 +111,6 @@ class _$OrderRequest extends OrderRequest {
   @override
   String toString() {
     return (newBuiltValueToStringHelper(r'OrderRequest')
-          ..add('listingId', listingId)
           ..add('startDate', startDate)
           ..add('numberOfDays', numberOfDays))
         .toString();
@@ -141,10 +120,6 @@ class _$OrderRequest extends OrderRequest {
 class OrderRequestBuilder
     implements Builder<OrderRequest, OrderRequestBuilder> {
   _$OrderRequest? _$v;
-
-  String? _listingId;
-  String? get listingId => _$this._listingId;
-  set listingId(String? listingId) => _$this._listingId = listingId;
 
   String? _startDate;
   String? get startDate => _$this._startDate;
@@ -159,7 +134,6 @@ class OrderRequestBuilder
   OrderRequestBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
-      _listingId = $v.listingId;
       _startDate = $v.startDate;
       _numberOfDays = $v.numberOfDays;
       _$v = null;
@@ -184,11 +158,6 @@ class OrderRequestBuilder
     final _$result =
         _$v ??
         _$OrderRequest._(
-          listingId: BuiltValueNullFieldError.checkNotNull(
-            listingId,
-            r'OrderRequest',
-            'listingId',
-          ),
           startDate: BuiltValueNullFieldError.checkNotNull(
             startDate,
             r'OrderRequest',

@@ -110,73 +110,33 @@ String toString() {
 
 
 class CreateOrderStatePlaced implements CreateOrderState {
-   CreateOrderStatePlaced(final  List<Order> orders): _orders = orders;
+   CreateOrderStatePlaced();
   
 
- final  List<Order> _orders;
- List<Order> get orders {
-  if (_orders is EqualUnmodifiableListView) return _orders;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_orders);
-}
 
 
-/// Create a copy of CreateOrderState
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$CreateOrderStatePlacedCopyWith<CreateOrderStatePlaced> get copyWith => _$CreateOrderStatePlacedCopyWithImpl<CreateOrderStatePlaced>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateOrderStatePlaced&&const DeepCollectionEquality().equals(other._orders, _orders));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateOrderStatePlaced);
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_orders));
+int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'CreateOrderState.placed(orders: $orders)';
+  return 'CreateOrderState.placed()';
 }
 
 
 }
 
-/// @nodoc
-abstract mixin class $CreateOrderStatePlacedCopyWith<$Res> implements $CreateOrderStateCopyWith<$Res> {
-  factory $CreateOrderStatePlacedCopyWith(CreateOrderStatePlaced value, $Res Function(CreateOrderStatePlaced) _then) = _$CreateOrderStatePlacedCopyWithImpl;
-@useResult
-$Res call({
- List<Order> orders
-});
 
 
-
-
-}
-/// @nodoc
-class _$CreateOrderStatePlacedCopyWithImpl<$Res>
-    implements $CreateOrderStatePlacedCopyWith<$Res> {
-  _$CreateOrderStatePlacedCopyWithImpl(this._self, this._then);
-
-  final CreateOrderStatePlaced _self;
-  final $Res Function(CreateOrderStatePlaced) _then;
-
-/// Create a copy of CreateOrderState
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? orders = null,}) {
-  return _then(CreateOrderStatePlaced(
-null == orders ? _self._orders : orders // ignore: cast_nullable_to_non_nullable
-as List<Order>,
-  ));
-}
-
-
-}
 
 /// @nodoc
 

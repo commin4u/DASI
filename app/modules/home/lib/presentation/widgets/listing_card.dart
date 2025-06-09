@@ -57,8 +57,8 @@ class ListingCard extends StatelessWidget {
                     begin: Alignment.bottomCenter,
                     end: Alignment.topCenter,
                     stops: [
-                      0.2,
-                      1.0,
+                      0.1,
+                      0.5,
                     ],
                     colors: [
                       Colors.black,
@@ -77,9 +77,6 @@ class ListingCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    height: 8.0,
-                  ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
@@ -92,9 +89,6 @@ class ListingCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  SizedBox(
-                    height: 8.0,
-                  ),
                   if (description != null && description.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -104,19 +98,21 @@ class ListingCard extends StatelessWidget {
                     SizedBox(
                       height: 8.0,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    Container(
+                      padding: const EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: listing.platform!.chipColor,
+                        borderRadius: BorderRadius.circular(25.0),
+                      ),
                       child: Text(
                         listing.platform!.name,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        maxLines: 2,
+                        style: Theme.of(context).textTheme.bodySmall,
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
-                  SizedBox(
-                    height: 8.0,
-                  )
+                  SizedBox( height: 16.0, ),
                 ],
               ),
             ),
