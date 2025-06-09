@@ -38,12 +38,10 @@ public class OrderService {
     public void placeOrder(final OrderRequestDto orderRequestDto, final Long videoGameId) {
         log.info("Adding a new order for video game with id=[{}]", videoGameId);
         var userId = ContextHolderUtils.getUserId();
-
-        //TODO: fix validation
         var startDate = LocalDate.parse(orderRequestDto.startDate(), DATE_FORMAT).atStartOfDay();
         var endDate = LocalDate.parse(orderRequestDto.startDate(), DATE_FORMAT).atStartOfDay().plusDays(orderRequestDto.numberOfDays());
 
-//        if (validateIfVideoGameIsAvailableForOrder(startDate, endDate)) {
+        if (validateIfVideoGameIsAvailableForOrder(startDate, endDate, videoGameId)) {
             var orderPrice = calculatorService.calculatePrice(orderRequestDto, videoGameId);
             var order = Order.builder()
                     .videoGameId(videoGameId)
@@ -56,10 +54,10 @@ public class OrderService {
 
             orderRepository.save(order);
             log.info("Order was successfully placed for video game with id=[{}] by user with id=[{}]", videoGameId, ContextHolderUtils.getUserId());
-//        } else {
-//            log.error("Order placed by user with id=[{}] for video game with id=[{}] was rejected. Requested range is unavailable for order", userId, videoGameId);
-//            throw new RangeUnavailableForOrderException("Requested range is unavailable for order");
-//        }
+        } else {
+            log.error("Order placed by user with id=[{}] for video game with id=[{}] was rejected. Requested range is unavailable for order", userId, videoGameId);
+            throw new RangeUnavailableForOrderException("Requested range is unavailable for order");
+        }
     }
 
     @Transactional(readOnly = true)
@@ -95,8 +93,8 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    private boolean validateIfVideoGameIsAvailableForOrder(final LocalDateTime startDate, final LocalDateTime endDate) {
-        return !orderRepository.existsByStartDateBeforeAndEndDate(startDate, endDate);
+    private boolean validateIfVideoGameIsAvailableForOrder(final LocalDateTime startDate, final LocalDateTime endDate, final Long videoGameId) {
+        return !orderRepository.existsBetweenStartDateAndEndDateByVideoGameId(startDate, endDate, videoGameId);
     }
 
 }
