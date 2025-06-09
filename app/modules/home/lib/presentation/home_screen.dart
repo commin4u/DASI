@@ -24,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.sizeOf(context).height;
+    final width = MediaQuery.sizeOf(context).width;
 
     return Scaffold(
       appBar: AppBar(
@@ -92,10 +93,13 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
 
             SliverToBoxAdapter(
-              child: Text("Recent Listings",
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineLarge,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text("Recent Listings",
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineLarge,
+                ),
               ),
             ),
 
@@ -130,15 +134,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisSpacing: 8,
                           mainAxisSpacing: 8,
                         ),
-                        delegate: SliverChildBuilderDelegate((context, index) {
+                        delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
                           final item = state.fullListListings[index];
-                          return ListingCard(
-                            listing: item,
-                            minHeight: height / 7,
-                            maxHeight: height / 7,
-                          );
+                          return SmallListingCard( listing: item );
                         },
-                          childCount: state.fullListListings.length,
+                        childCount: state.fullListListings.length,
                         ),
                       );
                   }

@@ -5,18 +5,25 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:home/domain/blocs/listing_details_cubit.dart';
 import 'package:home/domain/blocs/listing_details_state.dart';
 
-class ListingDetailsScreen extends StatelessWidget {
+class ListingDetailsScreen extends StatefulWidget {
   final int id;
 
   const ListingDetailsScreen({super.key, required this.id});
 
   @override
+  State<ListingDetailsScreen> createState() => _ListingDetailsScreenState();
+}
+
+class _ListingDetailsScreenState extends State<ListingDetailsScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<ListingDetailsCubit>().get(widget.id);
+  }
+
+  @override
   Widget build(BuildContext context) {
-
-    if (context.read<ListingDetailsCubit>().state is ListingDetailsStateInitial) {
-      context.read<ListingDetailsCubit>().get(id);
-    }
-
     return Scaffold(
       appBar: AppBar(title: Text('Listing Details')),
       body: Center(
@@ -60,7 +67,7 @@ class ListingDetailsScreen extends StatelessWidget {
                           if (listing.pricePerRent != null) ...[
                             const SizedBox(height: 8.0),
                             Text(
-                              'Price per additional day: ${listing.pricePerRent}',
+                              'Price per day: ${listing.pricePerRent}',
                               style: Theme.of(context).textTheme.headlineMedium,
                             ),
                           ]
