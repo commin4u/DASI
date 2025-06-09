@@ -100,10 +100,10 @@ class _$ListingSerializer implements StructuredSerializer<Listing> {
           serializers.serialize(value, specifiedType: const FullType(String)),
         );
     }
-    value = object.imageUrl;
+    value = object.imageBase64;
     if (value != null) {
       result
-        ..add('imageUrl')
+        ..add('imageBase64')
         ..add(
           serializers.serialize(value, specifiedType: const FullType(String)),
         );
@@ -112,9 +112,7 @@ class _$ListingSerializer implements StructuredSerializer<Listing> {
     if (value != null) {
       result
         ..add('id')
-        ..add(
-          serializers.serialize(value, specifiedType: const FullType(String)),
-        );
+        ..add(serializers.serialize(value, specifiedType: const FullType(int)));
     }
     value = object.pricePerRent;
     if (value != null) {
@@ -175,8 +173,8 @@ class _$ListingSerializer implements StructuredSerializer<Listing> {
                   )
                   as String?;
           break;
-        case 'imageUrl':
-          result.imageUrl =
+        case 'imageBase64':
+          result.imageBase64 =
               serializers.deserialize(
                     value,
                     specifiedType: const FullType(String),
@@ -185,11 +183,8 @@ class _$ListingSerializer implements StructuredSerializer<Listing> {
           break;
         case 'id':
           result.id =
-              serializers.deserialize(
-                    value,
-                    specifiedType: const FullType(String),
-                  )
-                  as String?;
+              serializers.deserialize(value, specifiedType: const FullType(int))
+                  as int?;
           break;
         case 'pricePerRent':
           result.pricePerRent =
@@ -262,6 +257,25 @@ class _$RentalTierSerializer implements PrimitiveSerializer<RentalTier> {
 }
 
 class _$PlatformSerializer implements PrimitiveSerializer<Platform> {
+  static const Map<String, Object> _toWire = const <String, Object>{
+    'ps3': 'PS3',
+    'ps4': 'PS4',
+    'ps5': 'PS5',
+    'pc': 'PC',
+    'xbox360': 'XBOX360',
+    'xboxOne': 'XBOXONE',
+    'xboxSeriesX': 'XBOXSERIESX',
+  };
+  static const Map<Object, String> _fromWire = const <Object, String>{
+    'PS3': 'ps3',
+    'PS4': 'ps4',
+    'PS5': 'ps5',
+    'PC': 'pc',
+    'XBOX360': 'xbox360',
+    'XBOXONE': 'xboxOne',
+    'XBOXSERIESX': 'xboxSeriesX',
+  };
+
   @override
   final Iterable<Type> types = const <Type>[Platform];
   @override
@@ -272,14 +286,16 @@ class _$PlatformSerializer implements PrimitiveSerializer<Platform> {
     Serializers serializers,
     Platform object, {
     FullType specifiedType = FullType.unspecified,
-  }) => object.name;
+  }) => _toWire[object.name] ?? object.name;
 
   @override
   Platform deserialize(
     Serializers serializers,
     Object serialized, {
     FullType specifiedType = FullType.unspecified,
-  }) => Platform.valueOf(serialized as String);
+  }) => Platform.valueOf(
+    _fromWire[serialized] ?? (serialized is String ? serialized : ''),
+  );
 }
 
 class _$Listing extends Listing {
@@ -288,9 +304,9 @@ class _$Listing extends Listing {
   @override
   final String? description;
   @override
-  final String? imageUrl;
+  final String? imageBase64;
   @override
-  final String? id;
+  final int? id;
   @override
   final int? pricePerRent;
   @override
@@ -308,7 +324,7 @@ class _$Listing extends Listing {
   _$Listing._({
     required this.title,
     this.description,
-    this.imageUrl,
+    this.imageBase64,
     this.id,
     this.pricePerRent,
     this.baseRentDays,
@@ -329,7 +345,7 @@ class _$Listing extends Listing {
     return other is Listing &&
         title == other.title &&
         description == other.description &&
-        imageUrl == other.imageUrl &&
+        imageBase64 == other.imageBase64 &&
         id == other.id &&
         pricePerRent == other.pricePerRent &&
         baseRentDays == other.baseRentDays &&
@@ -343,7 +359,7 @@ class _$Listing extends Listing {
     var _$hash = 0;
     _$hash = $jc(_$hash, title.hashCode);
     _$hash = $jc(_$hash, description.hashCode);
-    _$hash = $jc(_$hash, imageUrl.hashCode);
+    _$hash = $jc(_$hash, imageBase64.hashCode);
     _$hash = $jc(_$hash, id.hashCode);
     _$hash = $jc(_$hash, pricePerRent.hashCode);
     _$hash = $jc(_$hash, baseRentDays.hashCode);
@@ -359,7 +375,7 @@ class _$Listing extends Listing {
     return (newBuiltValueToStringHelper(r'Listing')
           ..add('title', title)
           ..add('description', description)
-          ..add('imageUrl', imageUrl)
+          ..add('imageBase64', imageBase64)
           ..add('id', id)
           ..add('pricePerRent', pricePerRent)
           ..add('baseRentDays', baseRentDays)
@@ -381,13 +397,13 @@ class ListingBuilder implements Builder<Listing, ListingBuilder> {
   String? get description => _$this._description;
   set description(String? description) => _$this._description = description;
 
-  String? _imageUrl;
-  String? get imageUrl => _$this._imageUrl;
-  set imageUrl(String? imageUrl) => _$this._imageUrl = imageUrl;
+  String? _imageBase64;
+  String? get imageBase64 => _$this._imageBase64;
+  set imageBase64(String? imageBase64) => _$this._imageBase64 = imageBase64;
 
-  String? _id;
-  String? get id => _$this._id;
-  set id(String? id) => _$this._id = id;
+  int? _id;
+  int? get id => _$this._id;
+  set id(int? id) => _$this._id = id;
 
   int? _pricePerRent;
   int? get pricePerRent => _$this._pricePerRent;
@@ -417,7 +433,7 @@ class ListingBuilder implements Builder<Listing, ListingBuilder> {
     if ($v != null) {
       _title = $v.title;
       _description = $v.description;
-      _imageUrl = $v.imageUrl;
+      _imageBase64 = $v.imageBase64;
       _id = $v.id;
       _pricePerRent = $v.pricePerRent;
       _baseRentDays = $v.baseRentDays;
@@ -452,7 +468,7 @@ class ListingBuilder implements Builder<Listing, ListingBuilder> {
             'title',
           ),
           description: description,
-          imageUrl: imageUrl,
+          imageBase64: imageBase64,
           id: id,
           pricePerRent: pricePerRent,
           baseRentDays: baseRentDays,

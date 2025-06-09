@@ -9,7 +9,7 @@ abstract class CreateOrderState with _$CreateOrderState {
 
   factory CreateOrderState.loading() = CreateOrderStateLoading;
 
-  factory CreateOrderState.placed(List<Order> orders) = CreateOrderStatePlaced;
+  factory CreateOrderState.placed() = CreateOrderStatePlaced;
 
   factory CreateOrderState.error(String message) = CreateOrderStateError;
 }

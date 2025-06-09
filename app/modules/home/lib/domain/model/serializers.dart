@@ -15,7 +15,6 @@ part 'serializers.g.dart';
   RentalTier,
   Platform,
 ])
-final Serializers serializers = (
-    _$serializers.toBuilder()
+final Serializers serializers = ( _$serializers.toBuilder()
       ..addPlugin(StandardJsonPlugin())
 ).build();

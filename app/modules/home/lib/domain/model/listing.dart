@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
@@ -17,8 +19,8 @@ abstract class Listing implements Built<Listing, ListingBuilder> {
 
   String get title;
   String? get description;
-  String? get imageUrl;
-  String? get id;
+  String? get imageBase64;
+  int? get id;
 
   int? get pricePerRent;
   int? get baseRentDays;
@@ -43,22 +45,83 @@ class RentalTier extends EnumClass {
 
   static BuiltSet<RentalTier> get values => _$listingTypeValues;
   static RentalTier valueOf(String name) => _$listingTypeValueOf(name);
+
+  @override
+  String get name {
+    switch (this) {
+      case RentalTier.regular:
+        return 'Regular';
+      case RentalTier.old:
+        return 'Old';
+    }
+    return super.name;
+  }
 }
 
 class Platform extends EnumClass {
 
   static Serializer<Platform> get serializer => _$platformSerializer;
 
+  @BuiltValueEnumConst(wireName: 'PS3')
   static const Platform ps3 = _$ps3;
+
+  @BuiltValueEnumConst(wireName: 'PS4')
   static const Platform ps4 = _$ps4;
+
+  @BuiltValueEnumConst(wireName: 'PS5')
   static const Platform ps5 = _$ps5;
+
+  @BuiltValueEnumConst(wireName: 'PC')
   static const Platform pc = _$pc;
+
+  @BuiltValueEnumConst(wireName: 'XBOX360')
   static const Platform xbox360 = _$xbox360;
+
+  @BuiltValueEnumConst(wireName: 'XBOXONE')
   static const Platform xboxOne = _$xboxOne;
+
+  @BuiltValueEnumConst(wireName: 'XBOXSERIESX')
   static const Platform xboxSeriesX = _$xboxSeriesX;
 
   const Platform._(super.name);
 
   static BuiltSet<Platform> get values => _$platformValues;
   static Platform valueOf(String name) => _$platformValueOf(name);
+
+  @override
+  String get name {
+    switch (this) {
+      case Platform.ps3:
+        return 'PlayStation 3';
+      case Platform.ps4:
+        return 'PlayStation 4';
+      case Platform.ps5:
+        return 'PlayStation 5';
+      case Platform.pc:
+        return 'PC';
+      case Platform.xbox360:
+        return 'Xbox 360';
+      case Platform.xboxOne:
+        return 'Xbox One';
+      case Platform.xboxSeriesX:
+        return 'Xbox Series X';
+    }
+    return super.name;
+  }
+
+  Color get chipColor {
+    switch (this) {
+      case Platform.ps3:
+      case Platform.ps4:
+      case Platform.ps5:
+        return const Color(0xFF0072C6); // PlayStation Blue
+      case Platform.pc:
+        return const Color(0xFF841617); // Amd Red
+      case Platform.xbox360:
+      case Platform.xboxOne:
+      case Platform.xboxSeriesX:
+        return const Color(0xFF107C10); // Xbox Green
+    }
+    return const Color(0xFF808080); // Grey
+  }
 }

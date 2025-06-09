@@ -29,7 +29,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace "utm.fcim.dasi"
+    namespace = "utm.fcim.dasi"
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
