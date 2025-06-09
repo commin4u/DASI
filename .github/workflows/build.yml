@@ -1,9 +1,8 @@
-name: CI/CD Pipeline
+name: CI/CD PipelineMore actions
 
 on:
   push: {}
-  pull_request:
-    branches: [main, develop]
+  pull_request: {}
   workflow_dispatch:
 
 env:
@@ -13,6 +12,10 @@ env:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 13
+    strategy:
+      matrix:
+        service: [auth, inventory, order]
 
     steps:
       - name: Checkout Code
@@ -24,85 +27,39 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Cache Gradle packages
-        uses: actions/cache@v3
+      - name: Setup Gradle Cache
+        uses: actions/cache@v4
         with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
+          path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v3
-
-      - name: Make Gradle Wrapper Executable
+      - name: Grant execute permission for Gradle Wrapper
         run: chmod +x ./gradlew
-        working-directory: inventory
+        working-directory: ${{ matrix.service }}
 
-      - name: Run Tests
-        run: ./gradlew test --info --stacktrace || true
-        continue-on-error: true
-        working-directory: inventory
-
-      - name: Build Application
-        run: ./gradlew build --info --stacktrace || true
-        continue-on-error: true
-        working-directory: inventory
+      - name: Build and test ${{ matrix.service }}
+        run: ./gradlew build --no-daemon --stacktrace --info
+        working-directory: ${{ matrix.service }}
 
       - name: Upload Test Results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
-          path: inventory/build/test-results/**/*.xml
+          name: ${{ matrix.service }}-test-results
+          path: ${{ matrix.service }}/build/test-results/**/*.xml
 
-  deploy-infrastructure:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Check for infra directory
-        run: |
-          if [ ! -d "infra" ]; then
-            echo "No infra/ directory found. Skipping Terraform steps."
-            exit 0
-          fi
-
-      - name: Install Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.5.0
-
-      - name: Terraform Format Check
-        run: terraform -chdir=infra fmt -check
-
-      - name: Terraform Init
-        run: terraform -chdir=infra init -input=false
-
-      - name: Terraform Validate
-        run: terraform -chdir=infra validate
-
-      - name: Terraform Plan
-        run: terraform -chdir=infra plan -out=tfplan -input=false
-
-      - name: Upload Terraform Plan
-        uses: actions/upload-artifact@v4
-        with:
-          name: terraform-plan
-          path: infra/tfplan
-
-      - name: Terraform Apply
-        if: github.ref == 'refs/heads/main'
-        run: terraform -chdir=infra apply -auto-approve -input=false
 
   docker-build:
     needs: build-and-test
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [auth, inventory, order]
+    permissions:
+      packages: write
+      contents: read
 
     steps:
       - name: Checkout Code
@@ -116,17 +73,18 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.CR_PAT || secrets.GITHUB_TOKEN }}
 
       - name: Build Docker Image
-        run: docker build -t $DOCKER_REGISTRY/$REPO_LOWERCASE/$DOCKER_IMAGE_NAME:${{ github.sha }} inventory/
+        run: |
+          docker build -t $DOCKER_REGISTRY/$REPO_LOWERCASE/${{ matrix.service }}-service:${{ github.sha }} ./${{ matrix.service }}
 
       - name: Tag Docker Image as latest
         run: |
-          docker tag $DOCKER_REGISTRY/$REPO_LOWERCASE/$DOCKER_IMAGE_NAME:${{ github.sha }} \
-                     $DOCKER_REGISTRY/$REPO_LOWERCASE/$DOCKER_IMAGE_NAME:latest
+          docker tag $DOCKER_REGISTRY/$REPO_LOWERCASE/${{ matrix.service }}-service:${{ github.sha }} \
+                       $DOCKER_REGISTRY/$REPO_LOWERCASE/${{ matrix.service }}-service:latest
 
       - name: Push Docker Images
         run: |
-          docker push $DOCKER_REGISTRY/$REPO_LOWERCASE/$DOCKER_IMAGE_NAME:${{ github.sha }}
-          docker push $DOCKER_REGISTRY/$REPO_LOWERCASE/$DOCKER_IMAGE_NAME:latest
+          docker push $DOCKER_REGISTRY/$REPO_LOWERCASE/${{ matrix.service }}-service:${{ github.sha }}
+          docker push $DOCKER_REGISTRY/$REPO_LOWERCASE/${{ matrix.service }}-service:latest
