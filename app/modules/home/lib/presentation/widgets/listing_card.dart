@@ -37,13 +37,13 @@ class ListingCard extends StatelessWidget {
         child: Stack(
           children: [
             ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: minHeight,
-                  maxHeight: maxHeight,
-                  minWidth: minWidth,
-                  maxWidth: maxWidth,
-                ),
-                child: _imageWidget(imageUrl),
+              constraints: BoxConstraints(
+                minHeight: minHeight,
+                maxHeight: maxHeight,
+                minWidth: minWidth,
+                maxWidth: maxWidth,
+              ),
+              child: _imageWidget(imageUrl),
             ),
 
             Positioned(
@@ -218,15 +218,13 @@ class SmallListingCard extends StatelessWidget {
                       child: Text(description),
                     ),
                   if (listing.platform?.name != null) ...[
-                    Positioned(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text(
-                          listing.platform!.name,
-                          style: Theme.of(context).textTheme.bodySmall,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text(
+                        listing.platform!.name,
+                        style: Theme.of(context).textTheme.bodySmall,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     SizedBox(
