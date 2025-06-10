@@ -81,13 +81,13 @@ class App extends StatelessWidget {
       ..interceptors.addAll( <Interceptor>[ ApiResponseInterceptor(router: _router), AuthorizationInterceptor(tokenStorageService: tokenStorageService) ] );
     final listingRepository = ListingRepositoryImpl( listingService: ListingService( dio ) );
     final authLoginService = ApiLoginService( Dio( BaseOptions( baseUrl: 'http://10.0.2.2:9000' ) ) );
-    final orderDio = Dio( BaseOptions( baseUrl: 'http://10.0.2.2:8089', contentType: 'application/json' ) )
+    final orderDio = Dio( BaseOptions( baseUrl: 'http://10.0.2.2:8089' ) )
       ..interceptors.addAll( <Interceptor>[ ApiResponseInterceptor(router: _router), AuthorizationInterceptor(tokenStorageService: tokenStorageService) ] );
-    final orderService = OrderService( orderDio) ;
+    final orderService = OrderService( orderDio ) ;
     return MultiBlocProvider(
       providers: [
         BlocProvider<LoginCubit>( create: (BuildContext context) => LoginCubit( authLoginService: authLoginService, tokenStorageService: tokenStorageService) ),
-        BlocProvider<ListingCubit>( create: (BuildContext context) => ListingCubit( listingRepository: listingRepository ) ),
+        BlocProvider<ListingCubit>( create: (BuildContext context) => ListingCubit( listingRepository: listingRepository, orderService: orderService ) ),
         BlocProvider<ListingDetailsCubit>( create: (BuildContext context) => ListingDetailsCubit( listingRepository:listingRepository ) ),
         BlocProvider<CreateOrderCubit>( create: (BuildContext context) => CreateOrderCubit( orderService: orderService ) ),
       ],

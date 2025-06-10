@@ -7,6 +7,7 @@ import 'package:home/domain/blocs/create_order_cubit.dart';
 import 'package:home/domain/blocs/create_order_state.dart';
 import 'package:home/domain/blocs/listing_details_cubit.dart';
 import 'package:home/domain/blocs/listing_details_state.dart';
+import 'package:intl/intl.dart';
 
 class ListingDetailsScreen extends StatefulWidget {
   final int id;
@@ -125,10 +126,9 @@ class _ListingDetailsScreenState extends State<ListingDetailsScreen> {
                                 );
                                 return;
                               }
-
                               context.read<CreateOrderCubit>().submitOrderRequest(
                                 listingId: listingId,
-                                startDate: startDate.toIso8601String(),
+                                startDate: DateFormat('dd-MM-yyyy').format(startDate),
                                 numberOfDays: numberOfDays,
                               );
                             },
