@@ -1,9 +1,11 @@
 import 'package:authentication/data/login_service.dart';
 import 'package:authentication/domain/login_bloc.dart';
 import 'package:authentication/presentation/authentication_screen.dart';
+import 'package:core/api_response_interceptor.dart';
 import 'package:dasi/l10n/arb/app_localizations.dart';
 import 'package:dasi/theme.dart';
 import 'package:dasi/util.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -14,7 +16,6 @@ import 'package:home/presentation/create_listing_screen.dart';
 import 'package:home/presentation/create_order_screen.dart';
 import 'package:home/presentation/home_screen.dart';
 import 'package:home/presentation/listing_details_screen.dart';
-import 'package:dio/dio.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -84,6 +85,7 @@ class App extends StatelessWidget {
           responseBody: true,
           logPrint: (o) => debugPrint(o.toString()),
         ),
+        ApiResponseInterceptor(),
       ],
     );
 

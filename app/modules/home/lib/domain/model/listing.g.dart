@@ -6,25 +6,22 @@ part of 'listing.dart';
 // BuiltValueGenerator
 // **************************************************************************
 
-const RentalTier _$game = const RentalTier._('game');
-const RentalTier _$accessory = const RentalTier._('accessory');
-const RentalTier _$console = const RentalTier._('console');
+const RentalTier _$regular = const RentalTier._('regular');
+const RentalTier _$old = const RentalTier._('old');
 
 RentalTier _$listingTypeValueOf(String name) {
   switch (name) {
-    case 'game':
-      return _$game;
-    case 'accessory':
-      return _$accessory;
-    case 'console':
-      return _$console;
+    case 'regular':
+      return _$regular;
+    case 'old':
+      return _$old;
     default:
       throw ArgumentError(name);
   }
 }
 
 final BuiltSet<RentalTier> _$listingTypeValues = BuiltSet<RentalTier>(
-  const <RentalTier>[_$game, _$accessory, _$console],
+  const <RentalTier>[_$regular, _$old],
 );
 
 const Platform _$ps3 = const Platform._('ps3');
@@ -67,6 +64,8 @@ final BuiltSet<Platform> _$platformValues = BuiltSet<Platform>(const <Platform>[
 ]);
 
 Serializer<Listing> _$listingSerializer = _$ListingSerializer();
+Serializer<RentalTier> _$rentalTierSerializer = _$RentalTierSerializer();
+Serializer<Platform> _$platformSerializer = _$PlatformSerializer();
 
 class _$ListingSerializer implements StructuredSerializer<Listing> {
   @override
@@ -86,17 +85,10 @@ class _$ListingSerializer implements StructuredSerializer<Listing> {
         object.title,
         specifiedType: const FullType(String),
       ),
-      'id',
-      serializers.serialize(object.id, specifiedType: const FullType(String)),
       'videoGameRentalTier',
       serializers.serialize(
         object.rentalTier,
         specifiedType: const FullType(RentalTier),
-      ),
-      'platform',
-      serializers.serialize(
-        object.platform,
-        specifiedType: const FullType(Platform),
       ),
     ];
     Object? value;
@@ -112,6 +104,14 @@ class _$ListingSerializer implements StructuredSerializer<Listing> {
     if (value != null) {
       result
         ..add('imageUrl')
+        ..add(
+          serializers.serialize(value, specifiedType: const FullType(String)),
+        );
+    }
+    value = object.id;
+    if (value != null) {
+      result
+        ..add('id')
         ..add(
           serializers.serialize(value, specifiedType: const FullType(String)),
         );
@@ -133,6 +133,14 @@ class _$ListingSerializer implements StructuredSerializer<Listing> {
       result
         ..add('pricePerAdditionalDay')
         ..add(serializers.serialize(value, specifiedType: const FullType(int)));
+    }
+    value = object.platform;
+    if (value != null) {
+      result
+        ..add('platform')
+        ..add(
+          serializers.serialize(value, specifiedType: const FullType(Platform)),
+        );
     }
     return result;
   }
@@ -180,8 +188,8 @@ class _$ListingSerializer implements StructuredSerializer<Listing> {
               serializers.deserialize(
                     value,
                     specifiedType: const FullType(String),
-                  )!
-                  as String;
+                  )
+                  as String?;
           break;
         case 'pricePerRent':
           result.pricePerRent =
@@ -211,14 +219,67 @@ class _$ListingSerializer implements StructuredSerializer<Listing> {
               serializers.deserialize(
                     value,
                     specifiedType: const FullType(Platform),
-                  )!
-                  as Platform;
+                  )
+                  as Platform?;
           break;
       }
     }
 
     return result.build();
   }
+}
+
+class _$RentalTierSerializer implements PrimitiveSerializer<RentalTier> {
+  static const Map<String, Object> _toWire = const <String, Object>{
+    'regular': 'REGULAR',
+    'old': 'OLD',
+  };
+  static const Map<Object, String> _fromWire = const <Object, String>{
+    'REGULAR': 'regular',
+    'OLD': 'old',
+  };
+
+  @override
+  final Iterable<Type> types = const <Type>[RentalTier];
+  @override
+  final String wireName = 'RentalTier';
+
+  @override
+  Object serialize(
+    Serializers serializers,
+    RentalTier object, {
+    FullType specifiedType = FullType.unspecified,
+  }) => _toWire[object.name] ?? object.name;
+
+  @override
+  RentalTier deserialize(
+    Serializers serializers,
+    Object serialized, {
+    FullType specifiedType = FullType.unspecified,
+  }) => RentalTier.valueOf(
+    _fromWire[serialized] ?? (serialized is String ? serialized : ''),
+  );
+}
+
+class _$PlatformSerializer implements PrimitiveSerializer<Platform> {
+  @override
+  final Iterable<Type> types = const <Type>[Platform];
+  @override
+  final String wireName = 'Platform';
+
+  @override
+  Object serialize(
+    Serializers serializers,
+    Platform object, {
+    FullType specifiedType = FullType.unspecified,
+  }) => object.name;
+
+  @override
+  Platform deserialize(
+    Serializers serializers,
+    Object serialized, {
+    FullType specifiedType = FullType.unspecified,
+  }) => Platform.valueOf(serialized as String);
 }
 
 class _$Listing extends Listing {
@@ -229,7 +290,7 @@ class _$Listing extends Listing {
   @override
   final String? imageUrl;
   @override
-  final String id;
+  final String? id;
   @override
   final int? pricePerRent;
   @override
@@ -239,7 +300,7 @@ class _$Listing extends Listing {
   @override
   final RentalTier rentalTier;
   @override
-  final Platform platform;
+  final Platform? platform;
 
   factory _$Listing([void Function(ListingBuilder)? updates]) =>
       (ListingBuilder()..update(updates))._build();
@@ -248,12 +309,12 @@ class _$Listing extends Listing {
     required this.title,
     this.description,
     this.imageUrl,
-    required this.id,
+    this.id,
     this.pricePerRent,
     this.baseRentDays,
     this.pricePerAdditionalDay,
     required this.rentalTier,
-    required this.platform,
+    this.platform,
   }) : super._();
   @override
   Listing rebuild(void Function(ListingBuilder) updates) =>
@@ -392,7 +453,7 @@ class ListingBuilder implements Builder<Listing, ListingBuilder> {
           ),
           description: description,
           imageUrl: imageUrl,
-          id: BuiltValueNullFieldError.checkNotNull(id, r'Listing', 'id'),
+          id: id,
           pricePerRent: pricePerRent,
           baseRentDays: baseRentDays,
           pricePerAdditionalDay: pricePerAdditionalDay,
@@ -401,11 +462,7 @@ class ListingBuilder implements Builder<Listing, ListingBuilder> {
             r'Listing',
             'rentalTier',
           ),
-          platform: BuiltValueNullFieldError.checkNotNull(
-            platform,
-            r'Listing',
-            'platform',
-          ),
+          platform: platform,
         );
     replace(_$result);
     return _$result;

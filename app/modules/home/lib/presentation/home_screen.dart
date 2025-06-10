@@ -6,27 +6,16 @@ import 'package:home/domain/blocs/listing_state.dart';
 import 'package:home/presentation/widgets/listing_card.dart';
 import 'package:home/presentation/widgets/listings_horizontal_carousel.dart';
 
-import '../domain/model/listing.dart';
-
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final listings = [0, 1, 2, 3, 4].map((element) {
-      final b = ListingBuilder()
-        ..description = 'Description of Game $element'
-        ..id = '$element'
-        ..rentalTier = RentalTier.accessory
-        ..platform = Platform.xbox360
-        ..imageUrl = 'https://fastly.picsum.photos/id/933/200/300.jpg?hmac=8zdipGWKGkHz8wyA9J63P3fzghuUL9wqV5Y34b8mLTI'
-        ..title = 'Game $element';
-      return b.build();
-    }).toList();
-
     if (context.read<ListingCubit>().state is ListingStateInitial) {
       context.read<ListingCubit>().loadListings();
     }
+
+    final height = MediaQuery.sizeOf(context).height;
 
     return Scaffold(
       appBar: AppBar(
@@ -50,77 +39,104 @@ class HomeScreen extends StatelessWidget {
           context.pushNamed('createListing');
         }
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 16.0),
-            BlocBuilder(
-                bloc: context.read<ListingCubit>(),
-                builder: (BuildContext context, ListingState state) {
-                  switch (state) {
-                    case ListingStateLoading _:
-                      return Center(child: CircularProgressIndicator());
-                    case ListingStateError _:
-                      return Center(child: Text('Error loading listings'));
-                    case ListingStateLoaded state:
-                      final listings = state.listings;
-                      if (listings.isEmpty) {
-                        return Center(child: Text('No listings available'));
-                      } else {
-                        return ListingsHorizontalCarousel(
-                          listings: state.listings,
-                          title: 'Featured Listings',
-                          onSeeAllPressed: () {},
-                        );
-                      }
+      body: CustomScrollView(
+        slivers: [
+          // Carousel
+          SliverToBoxAdapter(
+            child: BlocBuilder(
+              bloc: context.read<ListingCubit>(),
+              builder: (BuildContext context, ListingState state) {
+                switch (state) {
+                  case ListingStateLoading _:
+                    return const Center(child: CircularProgressIndicator());
+                  case ListingStateError _:
+                    return const Center(child: Text('Error loading listings'));
+                  case ListingStateLoaded state:
+                    final listings = state.carouselListings;
+                    if (listings.isEmpty) {
+                      return const Center(child: Text('No listings available'));
+                    }
+                    return ListingsHorizontalCarousel(
+                      title: 'Featured Listings',
+                      onSeeAllPressed: () {
+                        context.pushNamed('listingDetails');
+                      },
+                      listings: listings,
+                    );
                   }
-                  return SizedBox.shrink();
-                }
+                  return const SizedBox.shrink();
+              }
             ),
-            SizedBox(height: 16.0),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text('Recent Listings',
-                style: Theme
-                  .of(context)
+          ),
+
+          // Spacing
+          const SliverToBoxAdapter(
+            child: SizedBox(height: 16),
+          ),
+
+          SliverToBoxAdapter(
+            child: Text("Recent Listings",
+              style: Theme.of(context)
                   .textTheme
                   .headlineLarge,
-              ),
             ),
-            SizedBox(height: 16.0),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ...listings.map((listing) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                    child: ListingCard(listing: listing),
-                  );
-                }),
-              ],
+          ),
+
+          const SliverToBoxAdapter(
+            child: SizedBox(height: 16),
+          ),
+
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            sliver: BlocBuilder(
+              bloc: context.read<ListingCubit>(),
+              builder: (BuildContext context, ListingState state) {
+                switch (state) {
+                  case ListingStateLoading _:
+                    return const SliverFillRemaining(
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  case ListingStateError _:
+                    return const SliverFillRemaining(
+                      child: Center(child: Text('Error loading listings')),
+                    );
+                  case ListingStateLoaded state:
+                    if (state.fullListListings.isEmpty) {
+                      return const SliverFillRemaining(
+                        child: Center(child: Text('No listings available')),
+                      );
+                    }
+                    return SliverGrid(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.75,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
+                      ),
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final item = state.fullListListings[index];
+                        return ListingCard(
+                          listing: item,
+                          minHeight: height / 7,
+                        );
+                      },
+                        childCount: state.fullListListings.length,
+                      ),
+                    );
+                }
+                return const SliverFillRemaining(
+                  child: Center(child: Text('No listings available')),
+                );
+              }
             ),
-          ],
-        ),
+          ),
+
+          // Bottom padding
+          const SliverToBoxAdapter(
+            child: SizedBox(height: 16),
+          ),
+        ],
       ),
     );
   }
-
-  void _showAction(BuildContext context, FabAction action) {
-    switch (action) {
-      case FabAction.ADD_LISTING:
-        context.pushNamed('addListing');
-        break;
-      case FabAction.CREATE_ORDER:
-        context.pushNamed('createOrder');
-        break;
-    }
-  }
-}
-
-enum FabAction {
-  ADD_LISTING,
-  CREATE_ORDER,
 }
