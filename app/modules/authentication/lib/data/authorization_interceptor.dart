@@ -18,7 +18,6 @@ class AuthorizationInterceptor implements Interceptor {
       ...options.headers,
       'Authorization': 'Bearer $accessToken',
     };
-    debugPrint('API Request: ${options.method} ${options.path}');
     handler.next(options);
   }
 
