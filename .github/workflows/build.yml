@@ -51,6 +51,36 @@ jobs:
           path: ${{ matrix.service }}/build/test-results/**/*.xml
 
 
+  flutter-build-apk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'   # Flutter-compatible JDK
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'     # Flutter SDK channel
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Debug APK
+        run: flutter build apk --debug
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk
+          path: build/app/outputs/apk/debug/app-debug.apk
+
   docker-build:
     needs: build-and-test
     runs-on: ubuntu-latest
@@ -88,3 +118,4 @@ jobs:
         run: |
           docker push $DOCKER_REGISTRY/$REPO_LOWERCASE/${{ matrix.service }}-service:${{ github.sha }}
           docker push $DOCKER_REGISTRY/$REPO_LOWERCASE/${{ matrix.service }}-service:latest
+          
