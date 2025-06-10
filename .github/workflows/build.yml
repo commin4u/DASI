@@ -69,17 +69,24 @@ jobs:
         with:
           channel: 'stable'     # Flutter SDK channel
 
+      - name: Change to app directory
+        run: cd app 
+
       - name: Install dependencies
         run: flutter pub get
+        working-directory: app
 
       - name: Build Debug APK
         run: flutter build apk --debug
+        working-directory: app
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: debug-apk
-          path: build/app/outputs/apk/debug/app-debug.apk
+          path: app/build/app/outputs/apk/debug/app-debug.apk
+
+
 
   docker-build:
     needs: build-and-test
