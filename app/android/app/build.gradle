@@ -34,9 +34,13 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace = "utm.fcim.dasi"
     compileSdkVersion flutter.compileSdkVersion
+    compileSdk 35
     ndkVersion flutter.ndkVersion
 
     compileOptions {
+        // Flag to enable support for the new language APIs
+        coreLibraryDesugaringEnabled true
+
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -115,4 +119,5 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.20"
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.1.4"
 }

@@ -5,11 +5,14 @@ import 'package:authentication/domain/login_bloc.dart';
 import 'package:authentication/presentation/authentication_screen.dart';
 import 'package:core/api_response_interceptor.dart';
 import 'package:dasi/l10n/arb/app_localizations.dart';
+import 'package:dasi/main_development.dart';
 import 'package:dasi/theme.dart';
 import 'package:dasi/util.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
 import 'package:home/data/listing_repository.dart';
 import 'package:home/data/listing_service.dart';
@@ -22,9 +25,14 @@ import 'package:home/presentation/create_order_screen.dart';
 import 'package:home/presentation/home_screen.dart';
 import 'package:home/presentation/listing_details_screen.dart';
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
   App({super.key});
 
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
   final GoRouter _router = GoRouter(
     initialLocation: '/',
     debugLogDiagnostics: true,
@@ -72,6 +80,13 @@ class App extends StatelessWidget {
   );
 
   @override
+  void initState() {
+    super.initState();
+
+    NotificationService.init();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final brightness = View.of(context).platformDispatcher.platformBrightness;
     final textTheme = createTextTheme(context, 'Belanosima', 'Belanosima');
@@ -84,6 +99,7 @@ class App extends StatelessWidget {
     final orderDio = Dio( BaseOptions( baseUrl: 'http://10.0.2.2:8089' ) )
       ..interceptors.addAll( <Interceptor>[ ApiResponseInterceptor(router: _router), AuthorizationInterceptor(tokenStorageService: tokenStorageService) ] );
     final orderService = OrderService( orderDio ) ;
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<LoginCubit>( create: (BuildContext context) => LoginCubit( authLoginService: authLoginService, tokenStorageService: tokenStorageService) ),
@@ -98,5 +114,66 @@ class App extends StatelessWidget {
         supportedLocales: AppLocalizations.supportedLocales,
       ),
     );
+  }
+}
+
+class NotificationService {
+  static const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'high_importance_channel', // id
+    'High Importance Notifications', // title
+    description: 'This channel is used for important notifications.', // description
+    importance: Importance.max,
+  );
+
+  static Future<void> init() async {
+    final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(channel);
+
+    await flutterLocalNotificationsPlugin.initialize(
+      const InitializationSettings(
+        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+        iOS: DarwinInitializationSettings(),
+      ),
+      onDidReceiveNotificationResponse: (NotificationResponse response) {
+        // Handle notification tap
+        print('Notification tapped: ${response.payload}');
+      },
+      onDidReceiveBackgroundNotificationResponse: notificationTapBackground
+    );
+
+    await FirebaseMessaging.instance.getToken().then((message) {
+      if (message != null) {
+        print('Firebase Messaging Token: $message');
+      } else {
+        print('Failed to get Firebase Messaging Token');
+      }
+    });
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      final notification = message.notification;
+      final android = message.notification?.android;
+
+      print('Notification handled $notification, $android');
+
+      // If `onMessage` is triggered with a notification, construct our own
+      // local notification to show to users using the created channel.
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                channelDescription: channel.description,
+                icon: android.smallIcon,
+                importance: Importance.max,
+                priority: Priority.max,
+
+              ),
+            ));
+      }
+    });
   }
 }
