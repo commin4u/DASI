@@ -7,7 +7,7 @@ spec:
     app: auth
   ports:
     - protocol: TCP
-      port: 8080
+      port: 9000
       targetPort: 9000
       nodePort: 30081
   type: NodePort
