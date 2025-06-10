@@ -82,6 +82,30 @@ services:
       INVENTORY_SERVICE_HOST: inventory-service
       INVENTORY_SERVICE_PORT: 8085
 
+  notification_service:
+      build:
+        context: ./notification
+      container_name: notification_service
+      ports:
+        - "8088:8088"
+      networks:
+        - rental_store_network
+      depends_on:
+        postgres_notification:
+          condition: service_healthy
+        rabbitmq:
+          condition: service_healthy
+      environment:
+        DB_HOST: notification_service_db
+        DB_PORT: 5432
+        DB_NAME: notification_db
+        DB_USER: postgres
+        DB_PASSWORD: postgres
+        RABBITMQ_HOST: rabbitmq
+        RABBITMQ_PORT: 5672
+        RABBITMQ_USER: guest
+        RABBITMQ_PASSWORD: guest
+
 ### DBs for each service
   postgres_auth:
     image: postgres:16
@@ -146,6 +170,27 @@ services:
       start_period: 10s
       timeout: 5s
 
+  postgres_notification:
+    image: postgres:16
+    container_name: notification_service_db
+    restart: always
+    networks:
+      - rental_store_network
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: notification_db
+    ports:
+      - "5438:5432"
+    volumes:
+      - pgdata_notification:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 5s
+
 networks:
   rental_store_network:
     driver: bridge
@@ -156,4 +201,6 @@ volumes:
   pgdata_inventory:
     driver: local
   pgdata_order:
+    driver: local
+  pgdata_notification:
     driver: local
