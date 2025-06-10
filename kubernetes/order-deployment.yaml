@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-deployment
+  labels:
+    app: order
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order
+  template:
+    metadata:
+      labels:
+        app: order
+    spec:
+      containers:
+        - name: order
+          image: order-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8089
+          env:
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: dasi-secrets
+                  key: ORDER_DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: dasi-secrets
+                  key: ORDER_DB_PORT
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: dasi-secrets
+                  key: ORDER_DB_NAME
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: dasi-secrets
+                  key: ORDER_DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dasi-secrets
+                  key: ORDER_DB_PASSWORD
+            - name: INVENTORY_SERVICE_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: dasi-secrets
+                  key: INVENTORY_SERVICE_HOST
+            - name: INVENTORY_SERVICE_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: dasi-secrets
+                  key: INVENTORY_SERVICE_PORT

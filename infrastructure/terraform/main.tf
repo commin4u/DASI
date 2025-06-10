@@ -1,20 +1,17 @@
-# main.tf
 
-# COMBINED terraform block with all required providers
 terraform {
   required_providers {
     postgresql = {
       source  = "cyrilgdn/postgresql"
       version = "1.23.0"
     }
-    docker = { # NEW: Docker provider
+    docker = {
       source  = "kreuzwerker/docker"
-      version = "2.23.1" # Using a recent stable version for Docker provider
+      version = "2.23.1"
     }
   }
 }
 
-# Configure the PostgreSQL Provider
 provider "postgresql" {
   host     = "127.0.0.1"
   port     = 5432
@@ -24,21 +21,18 @@ provider "postgresql" {
   sslmode  = "disable"
 }
 
-# Resource: Create a new PostgreSQL database for the application
 resource "postgresql_database" "app_database" {
   name  = "dasi_application_db"
-  owner = postgresql_role.app_user.name # This line references the user below
+  owner = postgresql_role.app_user.name
 }
 
-# Resource: Create a new PostgreSQL user for the application
-resource "postgresql_role" "app_user" { # <--- THIS BLOCK MUST BE PRESENT!
+resource "postgresql_role" "app_user" {
   name            = "dasi_user"
-  password        = "pass" # For mockup
+  password        = "pass"
   login           = true
   create_database = false
 }
 
-# Output the database name and user for verification
 output "database_name" {
   value       = postgresql_database.app_database.name
   description = "The name of the database created by Terraform."
