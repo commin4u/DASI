@@ -63,7 +63,7 @@ public class VideoGameService extends ItemService {
 
         final VideoGameResponseDto videoGameResponse = mapVideoGameToVideoGameResponse
                 .apply(savedVideoGame);
-        rabbitTemplate.convertAndSend("notifying-queue", videoGameResponse.title());
+        rabbitTemplate.convertAndSend("notifying-queue", "A new video game with title=[{}] was added to the system");
 
         return videoGameResponse;
     }
