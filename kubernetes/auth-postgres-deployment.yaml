@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: order-postgres-deployment
+  name: auth-postgres-deployment
   labels:
-    app: order-postgres
+    app: auth-postgres
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: order-postgres
+      app: auth-postgres
   template:
     metadata:
       labels:
-        app: order-postgres
+        app: auth-postgres
     spec:
       containers:
         - name: postgres
@@ -25,16 +25,10 @@ spec:
             - name: POSTGRES_PASSWORD
               value: postgres
             - name: POSTGRES_DB
-              value: order_store_db
+              value: authorization_db
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data
-            - name: init-script
-              mountPath: /docker-entrypoint-initdb.d/init.sql
-              subPath: init.sql
       volumes:
         - name: postgres-storage
           emptyDir: {}
-        - name: init-script
-          configMap:
-            name: postgres-init-configmap

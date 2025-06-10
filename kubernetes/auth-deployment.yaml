@@ -19,29 +19,29 @@ spec:
           image: auth-service:latest
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 9000
+            - containerPort: 8080
           env:
-            - name: DB_HOST
+            - name: AUTH_DB_HOST
               valueFrom:
                 secretKeyRef:
                   name: dasi-secrets
                   key: AUTH_DB_HOST
-            - name: DB_PORT
+            - name: AUTH_DB_PORT
               valueFrom:
                 secretKeyRef:
                   name: dasi-secrets
                   key: AUTH_DB_PORT
-            - name: DB_NAME
+            - name: AUTH_DB_NAME
               valueFrom:
                 secretKeyRef:
                   name: dasi-secrets
                   key: AUTH_DB_NAME
-            - name: DB_USER
+            - name: AUTH_DB_USER
               valueFrom:
                 secretKeyRef:
                   name: dasi-secrets
                   key: AUTH_DB_USER
-            - name: DB_PASSWORD
+            - name: AUTH_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: dasi-secrets

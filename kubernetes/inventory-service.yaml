@@ -3,11 +3,11 @@ kind: Service
 metadata:
   name: inventory-service
 spec:
+  type: NodePort
   selector:
     app: inventory
-  type: NodePort
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 8080
+      port: 8085
+      targetPort: 8085
       nodePort: 30082
