@@ -11,6 +11,7 @@ Serializers _$serializers =
           ..add(Listing.serializer)
           ..add(Order.serializer)
           ..add(OrderRequest.serializer)
+          ..add(OrderStatus.serializer)
           ..add(Platform.serializer)
           ..add(RentalTier.serializer))
         .build();

@@ -28,6 +28,7 @@ final BuiltSet<OrderStatus> _$orderStatusValues = BuiltSet<OrderStatus>(
 );
 
 Serializer<Order> _$orderSerializer = _$OrderSerializer();
+Serializer<OrderStatus> _$orderStatusSerializer = _$OrderStatusSerializer();
 
 class _$OrderSerializer implements StructuredSerializer<Order> {
   @override
@@ -42,13 +43,6 @@ class _$OrderSerializer implements StructuredSerializer<Order> {
     FullType specifiedType = FullType.unspecified,
   }) {
     final result = <Object?>[
-      'id',
-      serializers.serialize(object.id, specifiedType: const FullType(String)),
-      'videoGameId',
-      serializers.serialize(
-        object.videoGameId,
-        specifiedType: const FullType(String),
-      ),
       'rentalPrice',
       serializers.serialize(
         object.rentalPrice,
@@ -64,13 +58,25 @@ class _$OrderSerializer implements StructuredSerializer<Order> {
         object.endDate,
         specifiedType: const FullType(String),
       ),
-      'status',
+      'orderStatus',
       serializers.serialize(
-        object.status,
+        object.orderStatus,
         specifiedType: const FullType(OrderStatus),
       ),
     ];
-
+    Object? value;
+    value = object.id;
+    if (value != null) {
+      result
+        ..add('id')
+        ..add(serializers.serialize(value, specifiedType: const FullType(int)));
+    }
+    value = object.videoGameId;
+    if (value != null) {
+      result
+        ..add('videoGameId')
+        ..add(serializers.serialize(value, specifiedType: const FullType(int)));
+    }
     return result;
   }
 
@@ -90,19 +96,13 @@ class _$OrderSerializer implements StructuredSerializer<Order> {
       switch (key) {
         case 'id':
           result.id =
-              serializers.deserialize(
-                    value,
-                    specifiedType: const FullType(String),
-                  )!
-                  as String;
+              serializers.deserialize(value, specifiedType: const FullType(int))
+                  as int?;
           break;
         case 'videoGameId':
           result.videoGameId =
-              serializers.deserialize(
-                    value,
-                    specifiedType: const FullType(String),
-                  )!
-                  as String;
+              serializers.deserialize(value, specifiedType: const FullType(int))
+                  as int?;
           break;
         case 'rentalPrice':
           result.rentalPrice =
@@ -128,8 +128,8 @@ class _$OrderSerializer implements StructuredSerializer<Order> {
                   )!
                   as String;
           break;
-        case 'status':
-          result.status =
+        case 'orderStatus':
+          result.orderStatus =
               serializers.deserialize(
                     value,
                     specifiedType: const FullType(OrderStatus),
@@ -143,11 +143,45 @@ class _$OrderSerializer implements StructuredSerializer<Order> {
   }
 }
 
+class _$OrderStatusSerializer implements PrimitiveSerializer<OrderStatus> {
+  static const Map<String, Object> _toWire = const <String, Object>{
+    'created': 'CREATED',
+    'inProgress': 'IN_PROGRESS',
+    'closed': 'CLOSED',
+  };
+  static const Map<Object, String> _fromWire = const <Object, String>{
+    'CREATED': 'created',
+    'IN_PROGRESS': 'inProgress',
+    'CLOSED': 'closed',
+  };
+
+  @override
+  final Iterable<Type> types = const <Type>[OrderStatus];
+  @override
+  final String wireName = 'OrderStatus';
+
+  @override
+  Object serialize(
+    Serializers serializers,
+    OrderStatus object, {
+    FullType specifiedType = FullType.unspecified,
+  }) => _toWire[object.name] ?? object.name;
+
+  @override
+  OrderStatus deserialize(
+    Serializers serializers,
+    Object serialized, {
+    FullType specifiedType = FullType.unspecified,
+  }) => OrderStatus.valueOf(
+    _fromWire[serialized] ?? (serialized is String ? serialized : ''),
+  );
+}
+
 class _$Order extends Order {
   @override
-  final String id;
+  final int? id;
   @override
-  final String videoGameId;
+  final int? videoGameId;
   @override
   final double rentalPrice;
   @override
@@ -155,18 +189,18 @@ class _$Order extends Order {
   @override
   final String endDate;
   @override
-  final OrderStatus status;
+  final OrderStatus orderStatus;
 
   factory _$Order([void Function(OrderBuilder)? updates]) =>
       (OrderBuilder()..update(updates))._build();
 
   _$Order._({
-    required this.id,
-    required this.videoGameId,
+    this.id,
+    this.videoGameId,
     required this.rentalPrice,
     required this.startDate,
     required this.endDate,
-    required this.status,
+    required this.orderStatus,
   }) : super._();
   @override
   Order rebuild(void Function(OrderBuilder) updates) =>
@@ -184,7 +218,7 @@ class _$Order extends Order {
         rentalPrice == other.rentalPrice &&
         startDate == other.startDate &&
         endDate == other.endDate &&
-        status == other.status;
+        orderStatus == other.orderStatus;
   }
 
   @override
@@ -195,7 +229,7 @@ class _$Order extends Order {
     _$hash = $jc(_$hash, rentalPrice.hashCode);
     _$hash = $jc(_$hash, startDate.hashCode);
     _$hash = $jc(_$hash, endDate.hashCode);
-    _$hash = $jc(_$hash, status.hashCode);
+    _$hash = $jc(_$hash, orderStatus.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -208,7 +242,7 @@ class _$Order extends Order {
           ..add('rentalPrice', rentalPrice)
           ..add('startDate', startDate)
           ..add('endDate', endDate)
-          ..add('status', status))
+          ..add('orderStatus', orderStatus))
         .toString();
   }
 }
@@ -216,13 +250,13 @@ class _$Order extends Order {
 class OrderBuilder implements Builder<Order, OrderBuilder> {
   _$Order? _$v;
 
-  String? _id;
-  String? get id => _$this._id;
-  set id(String? id) => _$this._id = id;
+  int? _id;
+  int? get id => _$this._id;
+  set id(int? id) => _$this._id = id;
 
-  String? _videoGameId;
-  String? get videoGameId => _$this._videoGameId;
-  set videoGameId(String? videoGameId) => _$this._videoGameId = videoGameId;
+  int? _videoGameId;
+  int? get videoGameId => _$this._videoGameId;
+  set videoGameId(int? videoGameId) => _$this._videoGameId = videoGameId;
 
   double? _rentalPrice;
   double? get rentalPrice => _$this._rentalPrice;
@@ -236,9 +270,10 @@ class OrderBuilder implements Builder<Order, OrderBuilder> {
   String? get endDate => _$this._endDate;
   set endDate(String? endDate) => _$this._endDate = endDate;
 
-  OrderStatus? _status;
-  OrderStatus? get status => _$this._status;
-  set status(OrderStatus? status) => _$this._status = status;
+  OrderStatus? _orderStatus;
+  OrderStatus? get orderStatus => _$this._orderStatus;
+  set orderStatus(OrderStatus? orderStatus) =>
+      _$this._orderStatus = orderStatus;
 
   OrderBuilder();
 
@@ -250,7 +285,7 @@ class OrderBuilder implements Builder<Order, OrderBuilder> {
       _rentalPrice = $v.rentalPrice;
       _startDate = $v.startDate;
       _endDate = $v.endDate;
-      _status = $v.status;
+      _orderStatus = $v.orderStatus;
       _$v = null;
     }
     return this;
@@ -273,12 +308,8 @@ class OrderBuilder implements Builder<Order, OrderBuilder> {
     final _$result =
         _$v ??
         _$Order._(
-          id: BuiltValueNullFieldError.checkNotNull(id, r'Order', 'id'),
-          videoGameId: BuiltValueNullFieldError.checkNotNull(
-            videoGameId,
-            r'Order',
-            'videoGameId',
-          ),
+          id: id,
+          videoGameId: videoGameId,
           rentalPrice: BuiltValueNullFieldError.checkNotNull(
             rentalPrice,
             r'Order',
@@ -294,10 +325,10 @@ class OrderBuilder implements Builder<Order, OrderBuilder> {
             r'Order',
             'endDate',
           ),
-          status: BuiltValueNullFieldError.checkNotNull(
-            status,
+          orderStatus: BuiltValueNullFieldError.checkNotNull(
+            orderStatus,
             r'Order',
-            'status',
+            'orderStatus',
           ),
         );
     replace(_$result);

@@ -11,6 +11,8 @@ abstract class OrderRequest implements Built<OrderRequest, OrderRequestBuilder> 
 
   factory OrderRequest.fromJson(Map<String, dynamic> json) => serializers.deserializeWith(serializer, json)!;
 
+  toJson() => serializers.serializeWith(serializer, this)! as Map<String, dynamic>;
+
   static Serializer<OrderRequest> get serializer => _$orderRequestSerializer;
 
   String get startDate;

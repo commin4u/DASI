@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:home/domain/blocs/listing_cubit.dart';
 import 'package:home/domain/model/listing.dart';
 
 class ListingCard extends StatelessWidget {
@@ -218,6 +219,104 @@ class SmallListingCard extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Text(
                         listing.platform!.name,
+                        style: Theme.of(context).textTheme.bodySmall,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8.0,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SmallOrderCard extends StatelessWidget {
+  final VideoGameWIthOrderDto order;
+
+  const SmallOrderCard({
+    super.key,
+    required this.order,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final imageUrl = order.videoGame.imageBase64;
+    final description = order.videoGame.description;
+    return GestureDetector(
+      onTap: () {
+        if (order.videoGame.id == null) {
+          return;
+        }
+        context.goNamed('listingDetails', pathParameters: {'id': order.videoGame.id.toString()});
+      },
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        child: Stack(
+          children: [
+            _imageWidget(imageUrl),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                height: MediaQuery.of(context).size.height * 0.25,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    stops: [
+                      0.2,
+                      1.0,
+                    ],
+                    colors: [
+                      Colors.black,
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+
+              ),
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Text(
+                      order.videoGame.title,
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .bodyLarge,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 8.0,
+                  ),
+                  if (description != null && description.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text(description),
+                    ),
+                  if (order.videoGame.platform?.name != null) ...[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text(
+                        order.videoGame.platform!.name,
                         style: Theme.of(context).textTheme.bodySmall,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,

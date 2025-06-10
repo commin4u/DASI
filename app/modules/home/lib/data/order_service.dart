@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:home/domain/model/order.dart';
 import 'package:home/domain/model/order_request.dart';
 import 'package:retrofit/retrofit.dart';
-
 
 part 'order_service.g.dart';
 
@@ -14,4 +14,7 @@ abstract class OrderService {
     @Path('listingId') int listingId,
     @Body() OrderRequest orderData,
   );
+
+  @GET('/all')
+  Future<List<Order>> getAllUserOrders();
 }
