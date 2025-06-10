@@ -18,6 +18,9 @@ dependencies:
   rxdart: ^0.28.0
   built_value: ^8.10.1
   built_collection: ^5.1.1
+  retrofit: ^4.4.2
+  dio: ^5.8.0+1
+  flutter_secure_storage: ^9.2.4
 
 dev_dependencies:
   flutter_test:
@@ -27,6 +30,7 @@ dev_dependencies:
   built_value_generator: ^8.10.1
   freezed: ^3.0.6
   json_serializable: ^6.9.5
+  retrofit_generator: ^9.2.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

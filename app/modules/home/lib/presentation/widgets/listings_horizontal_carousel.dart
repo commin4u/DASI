@@ -17,6 +17,7 @@ class ListingsHorizontalCarousel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.sizeOf(context).height;
+    final double width = MediaQuery.sizeOf(context).width;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,15 +45,19 @@ class ListingsHorizontalCarousel extends StatelessWidget {
 
         ConstrainedBox(
           constraints: BoxConstraints(
-            maxHeight: height / 2,
+            minHeight: height * 0.4,
+            maxHeight: height * 0.4,
           ),
           child: CarouselView.weighted(
             flexWeights: [1, 7, 1],
             itemSnapping: true,
             enableSplash: false,
-            children: listings.map((listing) => ListingCard(
+            children: listings.map((Listing listing) => ListingCard(
               listing: listing,
-              minHeight: height / 3.5,
+              minHeight: height * 0.4,
+              maxHeight: height * 0.4,
+              minWidth: width,
+              maxWidth: width,
             )).toList(),
           ),
         ),

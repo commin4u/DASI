@@ -22,21 +22,19 @@ class _$LoginDataSerializer implements StructuredSerializer<LoginData> {
   }) {
     final result = <Object?>[];
     Object? value;
-    value = object.email;
+    value = object.accessToken;
     if (value != null) {
       result
-        ..add('email')
+        ..add('accessToken')
         ..add(
           serializers.serialize(value, specifiedType: const FullType(String)),
         );
     }
-    value = object.password;
+    value = object.expiresIn;
     if (value != null) {
       result
-        ..add('password')
-        ..add(
-          serializers.serialize(value, specifiedType: const FullType(String)),
-        );
+        ..add('expires_in')
+        ..add(serializers.serialize(value, specifiedType: const FullType(int)));
     }
     return result;
   }
@@ -55,21 +53,18 @@ class _$LoginDataSerializer implements StructuredSerializer<LoginData> {
       iterator.moveNext();
       final Object? value = iterator.current;
       switch (key) {
-        case 'email':
-          result.email =
+        case 'accessToken':
+          result.accessToken =
               serializers.deserialize(
                     value,
                     specifiedType: const FullType(String),
                   )
                   as String?;
           break;
-        case 'password':
-          result.password =
-              serializers.deserialize(
-                    value,
-                    specifiedType: const FullType(String),
-                  )
-                  as String?;
+        case 'expires_in':
+          result.expiresIn =
+              serializers.deserialize(value, specifiedType: const FullType(int))
+                  as int?;
           break;
       }
     }
@@ -80,14 +75,14 @@ class _$LoginDataSerializer implements StructuredSerializer<LoginData> {
 
 class _$LoginData extends LoginData {
   @override
-  final String? email;
+  final String? accessToken;
   @override
-  final String? password;
+  final int? expiresIn;
 
   factory _$LoginData([void Function(LoginDataBuilder)? updates]) =>
       (LoginDataBuilder()..update(updates))._build();
 
-  _$LoginData._({this.email, this.password}) : super._();
+  _$LoginData._({this.accessToken, this.expiresIn}) : super._();
   @override
   LoginData rebuild(void Function(LoginDataBuilder) updates) =>
       (toBuilder()..update(updates)).build();
@@ -99,15 +94,15 @@ class _$LoginData extends LoginData {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is LoginData &&
-        email == other.email &&
-        password == other.password;
+        accessToken == other.accessToken &&
+        expiresIn == other.expiresIn;
   }
 
   @override
   int get hashCode {
     var _$hash = 0;
-    _$hash = $jc(_$hash, email.hashCode);
-    _$hash = $jc(_$hash, password.hashCode);
+    _$hash = $jc(_$hash, accessToken.hashCode);
+    _$hash = $jc(_$hash, expiresIn.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -115,8 +110,8 @@ class _$LoginData extends LoginData {
   @override
   String toString() {
     return (newBuiltValueToStringHelper(r'LoginData')
-          ..add('email', email)
-          ..add('password', password))
+          ..add('accessToken', accessToken)
+          ..add('expiresIn', expiresIn))
         .toString();
   }
 }
@@ -124,21 +119,21 @@ class _$LoginData extends LoginData {
 class LoginDataBuilder implements Builder<LoginData, LoginDataBuilder> {
   _$LoginData? _$v;
 
-  String? _email;
-  String? get email => _$this._email;
-  set email(String? email) => _$this._email = email;
+  String? _accessToken;
+  String? get accessToken => _$this._accessToken;
+  set accessToken(String? accessToken) => _$this._accessToken = accessToken;
 
-  String? _password;
-  String? get password => _$this._password;
-  set password(String? password) => _$this._password = password;
+  int? _expiresIn;
+  int? get expiresIn => _$this._expiresIn;
+  set expiresIn(int? expiresIn) => _$this._expiresIn = expiresIn;
 
   LoginDataBuilder();
 
   LoginDataBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
-      _email = $v.email;
-      _password = $v.password;
+      _accessToken = $v.accessToken;
+      _expiresIn = $v.expiresIn;
       _$v = null;
     }
     return this;
@@ -158,7 +153,8 @@ class LoginDataBuilder implements Builder<LoginData, LoginDataBuilder> {
   LoginData build() => _build();
 
   _$LoginData _build() {
-    final _$result = _$v ?? _$LoginData._(email: email, password: password);
+    final _$result =
+        _$v ?? _$LoginData._(accessToken: accessToken, expiresIn: expiresIn);
     replace(_$result);
     return _$result;
   }

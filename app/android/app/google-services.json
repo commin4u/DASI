@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "608321779078",
+    "project_id": "dasi-55fa8",
+    "storage_bucket": "dasi-55fa8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:608321779078:android:6acc8d98ab67295367e807",
+        "android_client_info": {
+          "package_name": "utm.fcim.dasi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBmko0GhONVA_W_YqZIA0iu9kiw3RJ5c8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
