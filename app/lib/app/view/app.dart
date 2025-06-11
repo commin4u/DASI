@@ -17,6 +17,7 @@ import 'package:go_router/go_router.dart';
 import 'package:home/data/listing_repository.dart';
 import 'package:home/data/listing_service.dart';
 import 'package:home/data/order_service.dart';
+import 'package:home/domain/blocs/add_listing_cubit.dart';
 import 'package:home/domain/blocs/create_order_cubit.dart';
 import 'package:home/domain/blocs/listing_cubit.dart';
 import 'package:home/domain/blocs/listing_details_cubit.dart';
@@ -71,7 +72,7 @@ class _AppState extends State<App> {
             name: 'createListing',
             builder: (BuildContext context, GoRouterState state) {
               // Placeholder for create listing screen
-              return const CreateListingScreen();
+              return CreateListingScreen();
             },
           ),
         ],
@@ -94,7 +95,7 @@ class _AppState extends State<App> {
     final tokenStorageService = TokenStorageService();
     final dio = Dio( BaseOptions( baseUrl: 'http://10.0.2.2:8085', connectTimeout: const Duration(milliseconds: 5000), receiveTimeout: const Duration(milliseconds: 3000) ) )
       ..interceptors.addAll( <Interceptor>[ ApiResponseInterceptor(router: _router), AuthorizationInterceptor(tokenStorageService: tokenStorageService) ] );
-    final listingRepository = ListingRepositoryImpl( listingService: ListingService( dio ) );
+    final listingRepository = ListingRepositoryImpl( listingService: ListingService( dio ), dio: dio );
     final authLoginService = ApiLoginService( Dio( BaseOptions( baseUrl: 'http://10.0.2.2:9000' ) ) );
     final orderDio = Dio( BaseOptions( baseUrl: 'http://10.0.2.2:8089' ) )
       ..interceptors.addAll( <Interceptor>[ ApiResponseInterceptor(router: _router), AuthorizationInterceptor(tokenStorageService: tokenStorageService) ] );
@@ -106,6 +107,7 @@ class _AppState extends State<App> {
         BlocProvider<ListingCubit>( create: (BuildContext context) => ListingCubit( listingRepository: listingRepository, orderService: orderService ) ),
         BlocProvider<ListingDetailsCubit>( create: (BuildContext context) => ListingDetailsCubit( listingRepository:listingRepository ) ),
         BlocProvider<CreateOrderCubit>( create: (BuildContext context) => CreateOrderCubit( orderService: orderService ) ),
+        BlocProvider<AddListingCubit>( create: (BuildContext context) => AddListingCubit( listingRepository: listingRepository ) ),
       ],
       child: MaterialApp.router(
         routerConfig: _router,

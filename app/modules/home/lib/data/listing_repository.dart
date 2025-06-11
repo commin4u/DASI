@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:home/data/listing_service.dart';
 import 'package:home/domain/model/listing.dart';
 
@@ -7,7 +8,12 @@ abstract class ListingRepository {
 
   Future<Listing> fetchListingDetails(int listingId);
 
-  Future<void> saveListing(Listing listing);
+  Future<void> saveListing({
+    required MultipartFile image,
+    required String title,
+    required String rentalTier,
+    required String platform,
+  });
 
   Future<void> deleteListing(String listingId);
 }
@@ -15,10 +21,13 @@ abstract class ListingRepository {
 class ListingRepositoryImpl implements ListingRepository {
 
   ListingRepositoryImpl({
-    required ListingService listingService
+    required ListingService listingService,
+    required this.dio,
   }) : _listingService = listingService;
 
   final ListingService _listingService;
+
+  final Dio dio;
 
   @override
   Future<List<Listing>> fetchListings() async {
@@ -33,10 +42,30 @@ class ListingRepositoryImpl implements ListingRepository {
   }
 
   @override
-  Future<void> saveListing(Listing listing) async {
-    return Future.error(
-      'Method not implemented. Please implement fetchListingDetails in ListingRepositoryImpl.',
-    );
+  Future<void> saveListing({
+    required MultipartFile image,
+    required String title,
+    required String rentalTier,
+    required String platform,
+  }) async {
+    try {
+      await dio.post(
+        '/api/video-game',
+        data: FormData.fromMap({
+          'image': image,
+          'title': title,
+          'rentalTier': rentalTier,
+          'platform': platform,
+        }),
+        options: Options(
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        )
+      );
+    } catch (e) {
+      return Future.error('Failed to save listing: $e');
+    }
   }
 
   @override

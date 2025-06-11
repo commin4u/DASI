@@ -24,15 +24,15 @@ final BuiltSet<RentalTier> _$listingTypeValues = BuiltSet<RentalTier>(
   const <RentalTier>[_$regular, _$old],
 );
 
-const Platform _$ps3 = const Platform._('ps3');
-const Platform _$ps4 = const Platform._('ps4');
-const Platform _$ps5 = const Platform._('ps5');
-const Platform _$pc = const Platform._('pc');
-const Platform _$xbox360 = const Platform._('xbox360');
-const Platform _$xboxOne = const Platform._('xboxOne');
-const Platform _$xboxSeriesX = const Platform._('xboxSeriesX');
+const GamePlatform _$ps3 = const GamePlatform._('ps3');
+const GamePlatform _$ps4 = const GamePlatform._('ps4');
+const GamePlatform _$ps5 = const GamePlatform._('ps5');
+const GamePlatform _$pc = const GamePlatform._('pc');
+const GamePlatform _$xbox360 = const GamePlatform._('xbox360');
+const GamePlatform _$xboxOne = const GamePlatform._('xboxOne');
+const GamePlatform _$xboxSeriesX = const GamePlatform._('xboxSeriesX');
 
-Platform _$platformValueOf(String name) {
+GamePlatform _$gamePlatformValueOf(String name) {
   switch (name) {
     case 'ps3':
       return _$ps3;
@@ -53,19 +53,21 @@ Platform _$platformValueOf(String name) {
   }
 }
 
-final BuiltSet<Platform> _$platformValues = BuiltSet<Platform>(const <Platform>[
-  _$ps3,
-  _$ps4,
-  _$ps5,
-  _$pc,
-  _$xbox360,
-  _$xboxOne,
-  _$xboxSeriesX,
-]);
+final BuiltSet<GamePlatform> _$gamePlatformValues = BuiltSet<GamePlatform>(
+  const <GamePlatform>[
+    _$ps3,
+    _$ps4,
+    _$ps5,
+    _$pc,
+    _$xbox360,
+    _$xboxOne,
+    _$xboxSeriesX,
+  ],
+);
 
 Serializer<Listing> _$listingSerializer = _$ListingSerializer();
 Serializer<RentalTier> _$rentalTierSerializer = _$RentalTierSerializer();
-Serializer<Platform> _$platformSerializer = _$PlatformSerializer();
+Serializer<GamePlatform> _$gamePlatformSerializer = _$GamePlatformSerializer();
 
 class _$ListingSerializer implements StructuredSerializer<Listing> {
   @override
@@ -137,7 +139,10 @@ class _$ListingSerializer implements StructuredSerializer<Listing> {
       result
         ..add('platform')
         ..add(
-          serializers.serialize(value, specifiedType: const FullType(Platform)),
+          serializers.serialize(
+            value,
+            specifiedType: const FullType(GamePlatform),
+          ),
         );
     }
     return result;
@@ -213,9 +218,9 @@ class _$ListingSerializer implements StructuredSerializer<Listing> {
           result.platform =
               serializers.deserialize(
                     value,
-                    specifiedType: const FullType(Platform),
+                    specifiedType: const FullType(GamePlatform),
                   )
-                  as Platform?;
+                  as GamePlatform?;
           break;
       }
     }
@@ -256,44 +261,44 @@ class _$RentalTierSerializer implements PrimitiveSerializer<RentalTier> {
   );
 }
 
-class _$PlatformSerializer implements PrimitiveSerializer<Platform> {
+class _$GamePlatformSerializer implements PrimitiveSerializer<GamePlatform> {
   static const Map<String, Object> _toWire = const <String, Object>{
     'ps3': 'PS3',
     'ps4': 'PS4',
     'ps5': 'PS5',
     'pc': 'PC',
-    'xbox360': 'XBOX360',
-    'xboxOne': 'XBOXONE',
-    'xboxSeriesX': 'XBOXSERIESX',
+    'xbox360': 'XBOX_360',
+    'xboxOne': 'XBOX_ONE',
+    'xboxSeriesX': 'XBOX_SERIES_X',
   };
   static const Map<Object, String> _fromWire = const <Object, String>{
     'PS3': 'ps3',
     'PS4': 'ps4',
     'PS5': 'ps5',
     'PC': 'pc',
-    'XBOX360': 'xbox360',
-    'XBOXONE': 'xboxOne',
-    'XBOXSERIESX': 'xboxSeriesX',
+    'XBOX_360': 'xbox360',
+    'XBOX_ONE': 'xboxOne',
+    'XBOX_SERIES_X': 'xboxSeriesX',
   };
 
   @override
-  final Iterable<Type> types = const <Type>[Platform];
+  final Iterable<Type> types = const <Type>[GamePlatform];
   @override
-  final String wireName = 'Platform';
+  final String wireName = 'GamePlatform';
 
   @override
   Object serialize(
     Serializers serializers,
-    Platform object, {
+    GamePlatform object, {
     FullType specifiedType = FullType.unspecified,
   }) => _toWire[object.name] ?? object.name;
 
   @override
-  Platform deserialize(
+  GamePlatform deserialize(
     Serializers serializers,
     Object serialized, {
     FullType specifiedType = FullType.unspecified,
-  }) => Platform.valueOf(
+  }) => GamePlatform.valueOf(
     _fromWire[serialized] ?? (serialized is String ? serialized : ''),
   );
 }
@@ -316,7 +321,7 @@ class _$Listing extends Listing {
   @override
   final RentalTier rentalTier;
   @override
-  final Platform? platform;
+  final GamePlatform? platform;
 
   factory _$Listing([void Function(ListingBuilder)? updates]) =>
       (ListingBuilder()..update(updates))._build();
@@ -422,9 +427,9 @@ class ListingBuilder implements Builder<Listing, ListingBuilder> {
   RentalTier? get rentalTier => _$this._rentalTier;
   set rentalTier(RentalTier? rentalTier) => _$this._rentalTier = rentalTier;
 
-  Platform? _platform;
-  Platform? get platform => _$this._platform;
-  set platform(Platform? platform) => _$this._platform = platform;
+  GamePlatform? _platform;
+  GamePlatform? get platform => _$this._platform;
+  set platform(GamePlatform? platform) => _$this._platform = platform;
 
   ListingBuilder();
 
