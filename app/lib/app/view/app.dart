@@ -92,11 +92,11 @@ class _AppState extends State<App> {
     final textTheme = createTextTheme(context, 'Belanosima', 'Belanosima');
     final theme = MaterialTheme(textTheme);
     final tokenStorageService = TokenStorageService();
-    final dio = Dio( BaseOptions( baseUrl: 'http://localhost:30082', connectTimeout: const Duration(milliseconds: 5000), receiveTimeout: const Duration(milliseconds: 3000) ) )
+    final dio = Dio( BaseOptions( baseUrl: 'http://localhost:8085', connectTimeout: const Duration(milliseconds: 5000), receiveTimeout: const Duration(milliseconds: 3000) ) )
       ..interceptors.addAll( <Interceptor>[ ApiResponseInterceptor(router: _router), AuthorizationInterceptor(tokenStorageService: tokenStorageService) ] );
     final listingRepository = ListingRepositoryImpl( listingService: ListingService( dio ) );
-    final authLoginService = ApiLoginService( Dio( BaseOptions( baseUrl: 'http://localhost:30081' ) ) );
-    final orderDio = Dio( BaseOptions( baseUrl: 'http://localhost:30083' ) )
+    final authLoginService = ApiLoginService( Dio( BaseOptions( baseUrl: 'http://localhost:9000' ) ) );
+    final orderDio = Dio( BaseOptions( baseUrl: 'http://localhost:8089' ) )
       ..interceptors.addAll( <Interceptor>[ ApiResponseInterceptor(router: _router), AuthorizationInterceptor(tokenStorageService: tokenStorageService) ] );
     final orderService = OrderService( orderDio ) ;
 
