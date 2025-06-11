@@ -154,6 +154,8 @@ class SmallListingCard extends StatelessWidget {
     final description = listing.description;
     return GestureDetector(
       onTap: () {
+        // Navigate to listing details if the listing has an ID
+        debugPrint('Listing ID: ${listing.id}');
         if (listing.id == null) {
           return;
         }
@@ -252,10 +254,10 @@ class SmallOrderCard extends StatelessWidget {
     final description = order.videoGame.description;
     return GestureDetector(
       onTap: () {
-        if (order.videoGame.id == null) {
+        if (order.order.id == null) {
           return;
         }
-        context.goNamed('listingDetails', pathParameters: {'id': order.videoGame.id.toString()});
+        context.goNamed('orderDetails', pathParameters: {'id': order.order.id.toString()});
       },
       child: Card(
         clipBehavior: Clip.antiAlias,

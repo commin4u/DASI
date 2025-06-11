@@ -11,6 +11,8 @@ dependencies:
   core:
     path: ../core
   go_router: ^15.1.1
+  authentication:
+    path: ../authentication
   flutter:
     sdk: flutter
   freezed_annotation: ^3.0.0

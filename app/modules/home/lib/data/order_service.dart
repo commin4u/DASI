@@ -17,4 +17,7 @@ abstract class OrderService {
 
   @GET('/all')
   Future<List<Order>> getAllUserOrders();
+
+  @GET('/{orderId}')
+  Future<Order> getOrderDetails(@Path('orderId') int orderId);
 }

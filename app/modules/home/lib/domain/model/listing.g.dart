@@ -134,6 +134,12 @@ class _$ListingSerializer implements StructuredSerializer<Listing> {
         ..add('pricePerAdditionalDay')
         ..add(serializers.serialize(value, specifiedType: const FullType(int)));
     }
+    value = object.addedByUserId;
+    if (value != null) {
+      result
+        ..add('addedByUserId')
+        ..add(serializers.serialize(value, specifiedType: const FullType(int)));
+    }
     value = object.platform;
     if (value != null) {
       result
@@ -203,6 +209,11 @@ class _$ListingSerializer implements StructuredSerializer<Listing> {
           break;
         case 'pricePerAdditionalDay':
           result.pricePerAdditionalDay =
+              serializers.deserialize(value, specifiedType: const FullType(int))
+                  as int?;
+          break;
+        case 'addedByUserId':
+          result.addedByUserId =
               serializers.deserialize(value, specifiedType: const FullType(int))
                   as int?;
           break;
@@ -319,6 +330,8 @@ class _$Listing extends Listing {
   @override
   final int? pricePerAdditionalDay;
   @override
+  final int? addedByUserId;
+  @override
   final RentalTier rentalTier;
   @override
   final GamePlatform? platform;
@@ -334,6 +347,7 @@ class _$Listing extends Listing {
     this.pricePerRent,
     this.baseRentDays,
     this.pricePerAdditionalDay,
+    this.addedByUserId,
     required this.rentalTier,
     this.platform,
   }) : super._();
@@ -355,6 +369,7 @@ class _$Listing extends Listing {
         pricePerRent == other.pricePerRent &&
         baseRentDays == other.baseRentDays &&
         pricePerAdditionalDay == other.pricePerAdditionalDay &&
+        addedByUserId == other.addedByUserId &&
         rentalTier == other.rentalTier &&
         platform == other.platform;
   }
@@ -369,6 +384,7 @@ class _$Listing extends Listing {
     _$hash = $jc(_$hash, pricePerRent.hashCode);
     _$hash = $jc(_$hash, baseRentDays.hashCode);
     _$hash = $jc(_$hash, pricePerAdditionalDay.hashCode);
+    _$hash = $jc(_$hash, addedByUserId.hashCode);
     _$hash = $jc(_$hash, rentalTier.hashCode);
     _$hash = $jc(_$hash, platform.hashCode);
     _$hash = $jf(_$hash);
@@ -385,6 +401,7 @@ class _$Listing extends Listing {
           ..add('pricePerRent', pricePerRent)
           ..add('baseRentDays', baseRentDays)
           ..add('pricePerAdditionalDay', pricePerAdditionalDay)
+          ..add('addedByUserId', addedByUserId)
           ..add('rentalTier', rentalTier)
           ..add('platform', platform))
         .toString();
@@ -423,6 +440,11 @@ class ListingBuilder implements Builder<Listing, ListingBuilder> {
   set pricePerAdditionalDay(int? pricePerAdditionalDay) =>
       _$this._pricePerAdditionalDay = pricePerAdditionalDay;
 
+  int? _addedByUserId;
+  int? get addedByUserId => _$this._addedByUserId;
+  set addedByUserId(int? addedByUserId) =>
+      _$this._addedByUserId = addedByUserId;
+
   RentalTier? _rentalTier;
   RentalTier? get rentalTier => _$this._rentalTier;
   set rentalTier(RentalTier? rentalTier) => _$this._rentalTier = rentalTier;
@@ -443,6 +465,7 @@ class ListingBuilder implements Builder<Listing, ListingBuilder> {
       _pricePerRent = $v.pricePerRent;
       _baseRentDays = $v.baseRentDays;
       _pricePerAdditionalDay = $v.pricePerAdditionalDay;
+      _addedByUserId = $v.addedByUserId;
       _rentalTier = $v.rentalTier;
       _platform = $v.platform;
       _$v = null;
@@ -478,6 +501,7 @@ class ListingBuilder implements Builder<Listing, ListingBuilder> {
           pricePerRent: pricePerRent,
           baseRentDays: baseRentDays,
           pricePerAdditionalDay: pricePerAdditionalDay,
+          addedByUserId: addedByUserId,
           rentalTier: BuiltValueNullFieldError.checkNotNull(
             rentalTier,
             r'Listing',

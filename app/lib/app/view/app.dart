@@ -21,10 +21,12 @@ import 'package:home/domain/blocs/add_listing_cubit.dart';
 import 'package:home/domain/blocs/create_order_cubit.dart';
 import 'package:home/domain/blocs/listing_cubit.dart';
 import 'package:home/domain/blocs/listing_details_cubit.dart';
+import 'package:home/domain/blocs/order_details_cubit.dart';
 import 'package:home/presentation/create_listing_screen.dart';
 import 'package:home/presentation/create_order_screen.dart';
 import 'package:home/presentation/home_screen.dart';
 import 'package:home/presentation/listing_details_screen.dart';
+import 'package:home/presentation/order_details_screen.dart';
 
 class App extends StatefulWidget {
   App({super.key});
@@ -75,6 +77,14 @@ class _AppState extends State<App> {
               return CreateListingScreen();
             },
           ),
+          GoRoute(
+            name: 'orderDetails',
+            path: 'order/:id',
+            builder: (BuildContext context, GoRouterState state) {
+              final id = state.pathParameters['id']!;
+              return OrderDetailsScreen(orderId: int.parse(id));
+            },
+          ),
         ],
       ),
     ],
@@ -108,6 +118,7 @@ class _AppState extends State<App> {
         BlocProvider<ListingDetailsCubit>( create: (BuildContext context) => ListingDetailsCubit( listingRepository:listingRepository ) ),
         BlocProvider<CreateOrderCubit>( create: (BuildContext context) => CreateOrderCubit( orderService: orderService ) ),
         BlocProvider<AddListingCubit>( create: (BuildContext context) => AddListingCubit( listingRepository: listingRepository ) ),
+        BlocProvider<OrderDetailsCubit>( create: (BuildContext context) => OrderDetailsCubit( orderService: orderService, listingRepository: listingRepository ) ),
       ],
       child: MaterialApp.router(
         routerConfig: _router,

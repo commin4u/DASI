@@ -31,4 +31,8 @@ class TokenStorageService {
     final token = await _storage.read(key: _accessTokenKey);
     return token != null;
   }
+
+  Future<void> clearToken() async {
+    await _storage.deleteAll();
+  }
 }
