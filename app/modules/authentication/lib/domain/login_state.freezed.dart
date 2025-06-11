@@ -146,33 +146,67 @@ String toString() {
 
 
 class LoginStateSuccess implements LoginState {
-  const LoginStateSuccess();
+  const LoginStateSuccess(this.userId);
   
 
+ final  int userId;
 
-
+/// Create a copy of LoginState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$LoginStateSuccessCopyWith<LoginStateSuccess> get copyWith => _$LoginStateSuccessCopyWithImpl<LoginStateSuccess>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoginStateSuccess);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoginStateSuccess&&(identical(other.userId, userId) || other.userId == userId));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode => Object.hash(runtimeType,userId);
 
 @override
 String toString() {
-  return 'LoginState.success()';
+  return 'LoginState.success(userId: $userId)';
 }
 
 
 }
 
+/// @nodoc
+abstract mixin class $LoginStateSuccessCopyWith<$Res> implements $LoginStateCopyWith<$Res> {
+  factory $LoginStateSuccessCopyWith(LoginStateSuccess value, $Res Function(LoginStateSuccess) _then) = _$LoginStateSuccessCopyWithImpl;
+@useResult
+$Res call({
+ int userId
+});
 
 
+
+
+}
+/// @nodoc
+class _$LoginStateSuccessCopyWithImpl<$Res>
+    implements $LoginStateSuccessCopyWith<$Res> {
+  _$LoginStateSuccessCopyWithImpl(this._self, this._then);
+
+  final LoginStateSuccess _self;
+  final $Res Function(LoginStateSuccess) _then;
+
+/// Create a copy of LoginState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? userId = null,}) {
+  return _then(LoginStateSuccess(
+null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+
+}
 
 /// @nodoc
 

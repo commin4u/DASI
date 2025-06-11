@@ -1,10 +1,13 @@
 import 'dart:io';
 
+import 'package:authentication/domain/login_bloc.dart';
+import 'package:authentication/domain/login_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:home/domain/blocs/add_listing_cubit.dart';
 import 'package:home/domain/blocs/listing_cubit.dart';
+import 'package:home/domain/blocs/listing_state.dart';
 import 'package:home/domain/model/listing.dart' as model_platform;
 import 'package:image_picker/image_picker.dart';
 
@@ -33,26 +36,29 @@ class _CreateListingScreenState extends State<CreateListingScreen> {
       body: BlocListener(
         bloc: context.read<AddListingCubit>(),
         listener: (context, AddListingState state) {
-          switch (state) {
-            case AddListingStateLoading _:
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Saving listing...')),
-              );
-              break;
-            case AddListingStateSuccess _:
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Listing saved successfully!')),
-              );
-              context.read<ListingCubit>().loadListings();
-              context.pop(context);
-              break;
-            case AddListingStateError error:
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Error: ${error.message}')),
-              );
-              break;
-            case AddListingStateFormData _:
-              break;
+          final loginState = context.read<LoginCubit>().state;
+          if (loginState is LoginStateSuccess) {
+            switch (state) {
+              case AddListingStateLoading _:
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Saving listing...')),
+                );
+                break;
+              case AddListingStateSuccess _:
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Listing saved successfully!')),
+                );
+                context.read<ListingCubit>().loadListings(loginState.userId);
+                context.pop(context);
+                break;
+              case AddListingStateError error:
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Error: ${error.message}')),
+                );
+                break;
+              case AddListingStateFormData _:
+                break;
+            }
           }
 
         },

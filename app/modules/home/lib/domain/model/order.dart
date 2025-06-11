@@ -36,4 +36,17 @@ class OrderStatus extends EnumClass {
 
   static BuiltSet<OrderStatus> get values => _$orderStatusValues;
   static OrderStatus valueOf(String name) => _$orderStatusValueOf(name);
+
+  @override
+  String get name {
+    switch (this) {
+      case OrderStatus.created:
+        return 'Created';
+      case OrderStatus.inProgress:
+        return 'In Progress';
+      case OrderStatus.closed:
+        return 'Closed';
+    }
+    return super.name;
+  }
 }

@@ -110,7 +110,7 @@ String toString() {
 
 
 class ListingStateLoaded implements ListingState {
-   ListingStateLoaded({required final  List<VideoGameWIthOrderDto> myOrders, required final  List<Listing> carouselListings, required final  List<Listing> fullListListings}): _myOrders = myOrders,_carouselListings = carouselListings,_fullListListings = fullListListings;
+   ListingStateLoaded({required final  List<VideoGameWIthOrderDto> myOrders, required final  List<Listing> carouselListings, required final  List<Listing> fullListListings, required final  List<Listing> myGames}): _myOrders = myOrders,_carouselListings = carouselListings,_fullListListings = fullListListings,_myGames = myGames;
   
 
  final  List<VideoGameWIthOrderDto> _myOrders;
@@ -134,6 +134,13 @@ class ListingStateLoaded implements ListingState {
   return EqualUnmodifiableListView(_fullListListings);
 }
 
+ final  List<Listing> _myGames;
+ List<Listing> get myGames {
+  if (_myGames is EqualUnmodifiableListView) return _myGames;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_myGames);
+}
+
 
 /// Create a copy of ListingState
 /// with the given fields replaced by the non-null parameter values.
@@ -145,16 +152,16 @@ $ListingStateLoadedCopyWith<ListingStateLoaded> get copyWith => _$ListingStateLo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ListingStateLoaded&&const DeepCollectionEquality().equals(other._myOrders, _myOrders)&&const DeepCollectionEquality().equals(other._carouselListings, _carouselListings)&&const DeepCollectionEquality().equals(other._fullListListings, _fullListListings));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ListingStateLoaded&&const DeepCollectionEquality().equals(other._myOrders, _myOrders)&&const DeepCollectionEquality().equals(other._carouselListings, _carouselListings)&&const DeepCollectionEquality().equals(other._fullListListings, _fullListListings)&&const DeepCollectionEquality().equals(other._myGames, _myGames));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_myOrders),const DeepCollectionEquality().hash(_carouselListings),const DeepCollectionEquality().hash(_fullListListings));
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_myOrders),const DeepCollectionEquality().hash(_carouselListings),const DeepCollectionEquality().hash(_fullListListings),const DeepCollectionEquality().hash(_myGames));
 
 @override
 String toString() {
-  return 'ListingState.loaded(myOrders: $myOrders, carouselListings: $carouselListings, fullListListings: $fullListListings)';
+  return 'ListingState.loaded(myOrders: $myOrders, carouselListings: $carouselListings, fullListListings: $fullListListings, myGames: $myGames)';
 }
 
 
@@ -165,7 +172,7 @@ abstract mixin class $ListingStateLoadedCopyWith<$Res> implements $ListingStateC
   factory $ListingStateLoadedCopyWith(ListingStateLoaded value, $Res Function(ListingStateLoaded) _then) = _$ListingStateLoadedCopyWithImpl;
 @useResult
 $Res call({
- List<VideoGameWIthOrderDto> myOrders, List<Listing> carouselListings, List<Listing> fullListListings
+ List<VideoGameWIthOrderDto> myOrders, List<Listing> carouselListings, List<Listing> fullListListings, List<Listing> myGames
 });
 
 
@@ -182,11 +189,12 @@ class _$ListingStateLoadedCopyWithImpl<$Res>
 
 /// Create a copy of ListingState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? myOrders = null,Object? carouselListings = null,Object? fullListListings = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? myOrders = null,Object? carouselListings = null,Object? fullListListings = null,Object? myGames = null,}) {
   return _then(ListingStateLoaded(
 myOrders: null == myOrders ? _self._myOrders : myOrders // ignore: cast_nullable_to_non_nullable
 as List<VideoGameWIthOrderDto>,carouselListings: null == carouselListings ? _self._carouselListings : carouselListings // ignore: cast_nullable_to_non_nullable
 as List<Listing>,fullListListings: null == fullListListings ? _self._fullListListings : fullListListings // ignore: cast_nullable_to_non_nullable
+as List<Listing>,myGames: null == myGames ? _self._myGames : myGames // ignore: cast_nullable_to_non_nullable
 as List<Listing>,
   ));
 }

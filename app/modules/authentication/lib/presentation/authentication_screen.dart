@@ -37,6 +37,7 @@ class AuthenticationScreen extends StatelessWidget {
                 context: context,
                 label: 'Email',
                 textInputAction: TextInputAction.next,
+                obscureText: false,
                 onChanged: (String value) {
                   context.read<LoginCubit>().onEmailChange(value);
                 },
@@ -46,6 +47,7 @@ class AuthenticationScreen extends StatelessWidget {
                 context: context,
                 label: "Password",
                 textInputAction: TextInputAction.done,
+                obscureText: true,
                 onChanged: (String value) {
                   context.read<LoginCubit>().onPasswordChange(value);
                 },
@@ -65,6 +67,7 @@ class AuthenticationScreen extends StatelessWidget {
     required String label,
     required TextInputAction textInputAction,
     required ValueChanged<String>? onChanged,
+    required bool obscureText,
     ValueChanged<String>? onSubmitted,
   }) {
     return TextField(
@@ -73,6 +76,7 @@ class AuthenticationScreen extends StatelessWidget {
         border: OutlineInputBorder(),
       ),
       textInputAction: textInputAction,
+      obscureText: obscureText,
       onChanged: onChanged,
       onSubmitted: onSubmitted,
     );
