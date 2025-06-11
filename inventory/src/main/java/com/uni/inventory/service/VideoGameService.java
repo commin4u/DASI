@@ -122,7 +122,7 @@ public class VideoGameService extends ItemService {
     private String validateContentType(final MultipartFile multipartFile) {
         String contentType = multipartFile.getContentType();
         if (contentType == null ||
-                (!contentType.equals("image/jpeg") && !contentType.equals("image/png"))) {
+                (!contentType.equals("image/jpeg") && !contentType.equals("image/png") && !contentType.equals("image/jpg"))) {
             throw new IllegalArgumentException("Only JPEG and PNG images are allowed.");
         }
 
