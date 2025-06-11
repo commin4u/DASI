@@ -8,11 +8,11 @@ part of 'serializers.dart';
 
 Serializers _$serializers =
     (Serializers().toBuilder()
+          ..add(GamePlatform.serializer)
           ..add(Listing.serializer)
           ..add(Order.serializer)
           ..add(OrderRequest.serializer)
           ..add(OrderStatus.serializer)
-          ..add(Platform.serializer)
           ..add(RentalTier.serializer))
         .build();
 

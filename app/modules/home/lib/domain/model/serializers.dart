@@ -13,7 +13,7 @@ part 'serializers.g.dart';
   OrderRequest,
   DataResult,
   RentalTier,
-  Platform,
+  GamePlatform,
 ])
 final Serializers serializers = ( _$serializers.toBuilder()
       ..addPlugin(StandardJsonPlugin())
