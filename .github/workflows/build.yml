@@ -77,7 +77,7 @@ jobs:
         working-directory: app
 
       - name: Build Development APK
-        run: flutter build apk --flavor development --target lib/main_development.dart
+        run: flutter build apk --flavor development --target lib/main_development.dart --debug
         working-directory: app
 
       - name: Upload APK artifact
