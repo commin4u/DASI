@@ -29,7 +29,7 @@ abstract class Listing implements Built<Listing, ListingBuilder> {
   @BuiltValueField(wireName: 'videoGameRentalTier')
   RentalTier get rentalTier;
 
-  Platform? get platform;
+  GamePlatform? get platform;
 }
 
 class RentalTier extends EnumClass {
@@ -56,54 +56,64 @@ class RentalTier extends EnumClass {
     }
     return super.name;
   }
+
+  String get wireName {
+    switch (this) {
+      case RentalTier.regular:
+        return 'REGULAR';
+      case RentalTier.old:
+        return 'OLD';
+    }
+    return super.name;
+  }
 }
 
-class Platform extends EnumClass {
+class GamePlatform extends EnumClass {
 
-  static Serializer<Platform> get serializer => _$platformSerializer;
+  static Serializer<GamePlatform> get serializer => _$gamePlatformSerializer;
 
   @BuiltValueEnumConst(wireName: 'PS3')
-  static const Platform ps3 = _$ps3;
+  static const GamePlatform ps3 = _$ps3;
 
   @BuiltValueEnumConst(wireName: 'PS4')
-  static const Platform ps4 = _$ps4;
+  static const GamePlatform ps4 = _$ps4;
 
   @BuiltValueEnumConst(wireName: 'PS5')
-  static const Platform ps5 = _$ps5;
+  static const GamePlatform ps5 = _$ps5;
 
   @BuiltValueEnumConst(wireName: 'PC')
-  static const Platform pc = _$pc;
+  static const GamePlatform pc = _$pc;
 
-  @BuiltValueEnumConst(wireName: 'XBOX360')
-  static const Platform xbox360 = _$xbox360;
+  @BuiltValueEnumConst(wireName: 'XBOX_360')
+  static const GamePlatform xbox360 = _$xbox360;
 
-  @BuiltValueEnumConst(wireName: 'XBOXONE')
-  static const Platform xboxOne = _$xboxOne;
+  @BuiltValueEnumConst(wireName: 'XBOX_ONE')
+  static const GamePlatform xboxOne = _$xboxOne;
 
-  @BuiltValueEnumConst(wireName: 'XBOXSERIESX')
-  static const Platform xboxSeriesX = _$xboxSeriesX;
+  @BuiltValueEnumConst(wireName: 'XBOX_SERIES_X')
+  static const GamePlatform xboxSeriesX = _$xboxSeriesX;
 
-  const Platform._(super.name);
+  const GamePlatform._(super.name);
 
-  static BuiltSet<Platform> get values => _$platformValues;
-  static Platform valueOf(String name) => _$platformValueOf(name);
+  static BuiltSet<GamePlatform> get values => _$gamePlatformValues;
+  static GamePlatform valueOf(String name) => _$gamePlatformValueOf(name);
 
   @override
   String get name {
     switch (this) {
-      case Platform.ps3:
+      case GamePlatform.ps3:
         return 'PlayStation 3';
-      case Platform.ps4:
+      case GamePlatform.ps4:
         return 'PlayStation 4';
-      case Platform.ps5:
+      case GamePlatform.ps5:
         return 'PlayStation 5';
-      case Platform.pc:
+      case GamePlatform.pc:
         return 'PC';
-      case Platform.xbox360:
+      case GamePlatform.xbox360:
         return 'Xbox 360';
-      case Platform.xboxOne:
+      case GamePlatform.xboxOne:
         return 'Xbox One';
-      case Platform.xboxSeriesX:
+      case GamePlatform.xboxSeriesX:
         return 'Xbox Series X';
     }
     return super.name;
@@ -111,17 +121,37 @@ class Platform extends EnumClass {
 
   Color get chipColor {
     switch (this) {
-      case Platform.ps3:
-      case Platform.ps4:
-      case Platform.ps5:
+      case GamePlatform.ps3:
+      case GamePlatform.ps4:
+      case GamePlatform.ps5:
         return const Color(0xFF0072C6); // PlayStation Blue
-      case Platform.pc:
+      case GamePlatform.pc:
         return const Color(0xFF841617); // Amd Red
-      case Platform.xbox360:
-      case Platform.xboxOne:
-      case Platform.xboxSeriesX:
+      case GamePlatform.xbox360:
+      case GamePlatform.xboxOne:
+      case GamePlatform.xboxSeriesX:
         return const Color(0xFF107C10); // Xbox Green
     }
     return const Color(0xFF808080); // Grey
+  }
+
+  String get wireName {
+    switch (this) {
+      case GamePlatform.ps3:
+        return 'PS3';
+      case GamePlatform.ps4:
+        return 'PS4';
+      case GamePlatform.ps5:
+        return 'PS5';
+      case GamePlatform.pc:
+        return 'PC';
+      case GamePlatform.xbox360:
+        return 'XBOX_360';
+      case GamePlatform.xboxOne:
+        return 'XBOX_ONE';
+      case GamePlatform.xboxSeriesX:
+        return 'XBOX_SERIES_X';
+    }
+    return super.name;
   }
 }

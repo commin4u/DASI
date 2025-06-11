@@ -10,7 +10,7 @@ part of 'listing_service.dart';
 
 class _ListingService implements ListingService {
   _ListingService(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'api/video-game';
+    baseUrl ??= 'api/';
   }
 
   final Dio _dio;
@@ -29,7 +29,7 @@ class _ListingService implements ListingService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/all',
+            'video-game/all',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -59,7 +59,7 @@ class _ListingService implements ListingService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/${videoGameId}',
+            'video-game/${videoGameId}',
             queryParameters: queryParameters,
             data: _data,
           )

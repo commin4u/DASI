@@ -37,6 +37,7 @@ class ApiResponseInterceptor implements Interceptor {
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
+    debugPrint('API Response: ${response.statusCode} ${response.data}');
     if (response.data == null) {
       handler.next(response);
       return;
