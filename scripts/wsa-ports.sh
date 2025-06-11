@@ -27,6 +27,6 @@ $ADB_PATH devices
 
 
 echo "[✓] Environment ready. Use these URLs in your app:"
-echo "    http://10.0.2.2:30081   → auth"
-echo "    http://10.0.2.2:30082   → inventory"
-echo "    http://10.0.2.2:30083   → order"
+echo "    http://localhost:30081   → auth"
+echo "    http://localhost:30082   → inventory"
+echo "    http://localhost:30083   → order"
