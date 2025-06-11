@@ -15,6 +15,7 @@ abstract class ListingState with _$ListingState {
     required List<VideoGameWIthOrderDto> myOrders,
     required List<Listing> carouselListings,
     required List<Listing> fullListListings,
+    required List<Listing> myGames,
   }) = ListingStateLoaded;
 
   factory ListingState.error(String message) = ListingStateError;

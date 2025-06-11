@@ -62,6 +62,7 @@ class _ListingDetailsScreenState extends State<ListingDetailsScreen> {
                         if (listing.imageBase64 != null)
                           Image.memory(
                             base64Decode(listing.imageBase64!),
+                            width: MediaQuery.of(context).size.width,
                           ),
                         const SizedBox(height: 16.0),
                         Text(

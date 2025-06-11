@@ -17,7 +17,7 @@ class ListingCubit extends Cubit<ListingState> {
   final ListingRepository _listingRepository;
   final OrderService _orderService;
 
-  Future<void> loadListings() async {
+  Future<void> loadListings(int? userId) async {
     emit(ListingState.loading());
     final data = await _listingRepository.fetchListings();
     final orders = await _orderService.getAllUserOrders();
@@ -37,6 +37,7 @@ class ListingCubit extends Cubit<ListingState> {
       myOrders: filteredOrders,
       carouselListings: data.take(5).toList(),
       fullListListings: data,
+      myGames: data.where((listing) => listing.addedByUserId == userId).toList(),
     ));
   }
 }

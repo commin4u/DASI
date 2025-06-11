@@ -25,6 +25,7 @@ abstract class Listing implements Built<Listing, ListingBuilder> {
   int? get pricePerRent;
   int? get baseRentDays;
   int? get pricePerAdditionalDay;
+  int? get addedByUserId;
 
   @BuiltValueField(wireName: 'videoGameRentalTier')
   RentalTier get rentalTier;

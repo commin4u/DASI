@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:authentication/data/token_storage_service.dart';
-import 'package:core/api_response_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,7 +16,10 @@ class LoginCubit extends Cubit<LoginState> {
   })
       : _authLoginService = authLoginService,
         _tokenStorageService = tokenStorageService,
-        super(const LoginState.formData(email: null, password: null));
+        super(const LoginState.formData(email: null, password: null)) {
+
+    updateUserState();
+  }
 
   final LoginService _authLoginService;
 
@@ -32,6 +34,11 @@ class LoginCubit extends Cubit<LoginState> {
         break;
       case LoginStateError _:
         break;
+      case LoginStateSuccess _:
+        // If the user is already logged in, we don't need to change the password
+        // so we can ignore this event.
+        emit(LoginState.formData(email: null, password: password));
+        break;
     }
   }
 
@@ -44,11 +51,16 @@ class LoginCubit extends Cubit<LoginState> {
         break;
       case LoginStateError _:
         break;
+      case LoginStateSuccess _:
+      // If the user is already logged in, we don't need to change the password
+      // so we can ignore this event.
+        emit(LoginState.formData(email: email, password: null));
     }
   }
 
   Future<void> submitLogin() async {
     final currentState = state;
+    debugPrint('Current state: $currentState');
     if (currentState is LoginStateFormData) {
       try {
         emit(const LoginState.loading());
@@ -58,11 +70,15 @@ class LoginCubit extends Cubit<LoginState> {
         final result = await _authLoginService.submitLogin(loginRequest);
         debugPrint('Login result: $result');
         if (result.accessToken != null) {
-          emit(LoginState.success());
           await _tokenStorageService.saveToken(
             accessToken: result.accessToken!,
           );
 
+          final tokenJson = parseJwt(result.accessToken!);
+          final userId = tokenJson['sub'] as String?;
+          final userIdInt = int.tryParse(userId ?? '');
+
+          emit(LoginState.success(userIdInt!));
         } else {
           emit(LoginState.error('Login failed'));
         }
@@ -77,5 +93,63 @@ class LoginCubit extends Cubit<LoginState> {
         emit(currentState);
       }
     }
+  }
+
+  Future<void> logout() async {
+    try {
+      await _tokenStorageService.clearToken();
+      emit(const LoginState.formData(email: null, password: null));
+    } catch (e) {
+      debugPrint('Logout error: $e');
+      emit(LoginState.error('Logout failed'));
+    }
+  }
+
+  Future<void> updateUserState() async {
+    final accessToken = await _tokenStorageService.getAccessToken();
+    debugPrint('Updating user state with access token: $accessToken');
+    if (accessToken != null) {
+      final tokenJson = parseJwt(accessToken);
+      final userId = tokenJson['sub'] as String?;
+      final userIdInt = int.tryParse(userId ?? '');
+
+      emit(LoginState.success(userIdInt!));
+    } else {
+      emit(LoginState.error('Login failed'));
+    }
+  }
+
+  Map<String, dynamic> parseJwt(String token) {
+    final parts = token.split('.');
+    if (parts.length != 3) {
+      throw Exception('invalid token');
+    }
+
+    final payload = _decodeBase64(parts[1]);
+    final payloadMap = json.decode(payload);
+    if (payloadMap is! Map<String, dynamic>) {
+      throw Exception('invalid payload');
+    }
+
+    return payloadMap;
+  }
+
+  String _decodeBase64(String str) {
+    String output = str.replaceAll('-', '+').replaceAll('_', '/');
+
+    switch (output.length % 4) {
+      case 0:
+        break;
+      case 2:
+        output += '==';
+        break;
+      case 3:
+        output += '=';
+        break;
+      default:
+        throw Exception('Illegal base64url string!"');
+    }
+
+    return utf8.decode(base64Url.decode(output));
   }
 }

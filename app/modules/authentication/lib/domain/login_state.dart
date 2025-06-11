@@ -11,7 +11,7 @@ abstract class LoginState with _$LoginState {
 
   const factory LoginState.loading() = LoginStateLoading;
 
-  const factory LoginState.success() = LoginStateSuccess;
+  const factory LoginState.success(int userId) = LoginStateSuccess;
 
   const factory LoginState.error(
     String message
