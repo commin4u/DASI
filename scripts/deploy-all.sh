@@ -72,5 +72,11 @@ echo "[+] Checking pod status..."
 kubectl get pods
 
 echo "[✓] Backend deployment completed successfully!"
-echo "[+] Run './scripts/build-flutter-push.sh' to build and push Flutter app."
-echo "[+] Run './scripts/start-services.sh' to start port forwarding."
+
+# Step 7: Run the Flutter build and push script
+echo "[+] Running Flutter build and push script..."
+./build-flutter-push.sh
+if [ $? -ne 0 ]; then
+  echo "[!] Flutter build and push script failed."
+  exit 1
+fi

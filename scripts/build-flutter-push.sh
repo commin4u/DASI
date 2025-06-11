@@ -10,7 +10,8 @@ BASE_DIR="/c/AAnother/PycharmProjects/DASI/DASI"
 FLUTTER_DIR="$BASE_DIR/app"
 BUILD_OUTPUT_DIR="$FLUTTER_DIR/build/app/outputs/flutter-apk"
 APK_FILE="$BUILD_OUTPUT_DIR/app-development-debug.apk"
-COMMIT_MESSAGE="Update Flutter app debug APK"
+DEST_APK_FILE="$BASE_DIR/app-development-debug.apk" # NEW: Define target APK path in root
+COMMIT_MESSAGE="Pushed new APK version"
 
 echo "[+] Starting Flutter app build and GitHub update..."
 
@@ -49,9 +50,17 @@ if [ ! -f "$APK_FILE" ]; then
   exit 1
 fi
 
-# Stage build artifacts
+# NEW: Copy APK to the root directory
+echo "[+] Copying APK to root directory: $DEST_APK_FILE"
+cp "$APK_FILE" "$DEST_APK_FILE" || {
+  echo "[!] Failed to copy APK to root directory."
+  exit 1
+}
+
+
+# Stage build artifacts (now staging from the new location)
 echo "[+] Staging build artifacts..."
-git add "$APK_FILE" || {
+git add "$DEST_APK_FILE" || { # UPDATED: Use DEST_APK_FILE
   echo "[!] Failed to stage APK."
   exit 1
 }
@@ -74,7 +83,5 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "[✓] Flutter app built and pushed to GitHub successfully!"
-echo "[+] APK available at: $APK_FILE"
-echo "[+] Run './scripts/start-services.sh' to start port forwarding."
-echo "[+] Install APK on WSA: adb install $APK_FILE"
-echo "[+] Or run 'flutter run' for development."
+echo "[+] APK available at: $DEST_APK_FILE" # UPDATED: Use DEST_APK_FILE in message
+

@@ -20,6 +20,11 @@ fi
 echo "[+] Connecting to WSA (attempting localhost:58526)..."
 $ADB_PATH connect 127.0.0.1:58526
 
+$ADB_PATH reverse tcp:9000 tcp:30081
+$ADB_PATH reverse tcp:8085 tcp:30082
+$ADB_PATH reverse tcp:8089 tcp:30083
+
+
 # Optional: Confirm connection
 echo "[+] Connected devices:"
 $ADB_PATH devices
