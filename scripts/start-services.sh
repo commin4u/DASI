@@ -4,7 +4,6 @@ kubectl port-forward svc/inventory-service 30082:8085 &
 kubectl port-forward svc/order-service 30083:8089 &
 
 
-
 cd /c/Users/f2p/AppData/Local/Android/Sdk/platform-tools/
 
 ./adb connect 127.0.0.1:58526
